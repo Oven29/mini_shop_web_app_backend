@@ -1,0 +1,20 @@
+#
+.idea/
+.vscode/
+#
+.venv/
+venv/
+# cache
+__pycache__/
+*.pyc
+#
+.env
+.env.dev
+# logs
+logs/
+*.log
+# data
+*.db
+*.sqlite3
+uploads/
+.docker/
