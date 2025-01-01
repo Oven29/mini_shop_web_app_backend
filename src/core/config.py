@@ -28,7 +28,10 @@ class Settings(BaseSettings):
 
     FRONTEND_URL: str
     BOT_TOKEN: str
+
     SECRET_KEY: str = '123456789abc'
+    ALGORITHM: str = 'HS256'
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     def get_db_url(self) -> str:
         if self.DB_URL:
