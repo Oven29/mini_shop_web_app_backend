@@ -22,7 +22,6 @@ def user_auth(init_data: WebAppInitData) -> WebAppInitData:
 def admin_auth(token: str) -> AdminSchema:
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -31,7 +30,6 @@ def admin_auth(token: str) -> AdminSchema:
 
     try:
         return AdminSchema(**payload)
-
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
