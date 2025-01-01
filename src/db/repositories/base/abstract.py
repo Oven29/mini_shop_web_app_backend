@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar
 
 
-T = TypeVar("T")
+T = TypeVar('T')
 
 
 class AbstractRepository(ABC, Generic[T]):
