@@ -16,5 +16,6 @@ logs/
 # data
 *.db
 *.sqlite3
+*.sqlite
 uploads/
 .docker/

@@ -1,4 +1,5 @@
 import random
+import re
 from string import hexdigits
 from typing import Optional
 from unidecode import unidecode
@@ -23,3 +24,13 @@ def get_rand_string(length: int, base: Optional[str] = None) -> str:
     :return: random string
     """
     return ''.join(random.choice(base or hexdigits) for _ in range(length))
+
+
+def to_snake_case(text: str) -> str:
+    """
+    Convert string to snake case
+
+    :param text: text for convert
+    :return: snake case string
+    """
+    return re.sub(r'([a-z])([A-Z])', r'\1_\2', text).lower()

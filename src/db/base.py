@@ -1,23 +1,33 @@
-from typing import Any
+from typing import Any, Optional
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
 
 from core.config import settings
+from utils.other import to_snake_case
 
 
-engine = create_async_engine(settings.get_db_url())
+engine = create_async_engine(settings.DATABASE_URL, echo=settings.DEBUG)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 
 class Base(DeclarativeBase, AsyncAttrs):
     __abstract__ = True
+    __schema__: BaseModel = None
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    def __init_subclass__(cls, **kwargs: Any) -> None:
-        super().__init_subclass__(**kwargs)
-        if not hasattr(cls, '__tablename__'):
-            cls.__tablename__ = f'{cls.__name__.lower()}s'
+    @declared_attr.directive
+    def __tablename__(cls) -> str:
+        return f'{to_snake_case(cls.__name__)}s'
+
+    def to_schema(self) -> Optional[BaseModel]:
+        if self.__schema__ is None:
+            return
+        return self.__schema__(**{
+            field: getattr(self, field)
+            for field in self.__schema__.model_fields.keys()
+        })
 
 
 async def get_async_session():

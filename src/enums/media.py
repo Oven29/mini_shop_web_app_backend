@@ -1,10 +1,10 @@
 from enum import Enum
 
 
-class TypeMedia(Enum, str):
+class TypeMedia(str, Enum):
     VIDEO = 'VIDEO'
     IMAGE = 'IMAGE'
 
 
-class LocationMedia(Enum, str):
+class LocationMedia(str, Enum):
     LOCAL = 'LOCAL'
