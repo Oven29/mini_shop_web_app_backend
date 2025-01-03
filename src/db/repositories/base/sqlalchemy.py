@@ -36,7 +36,8 @@ class SQLAlchemyRepository(AbstractRepository[T]):
         if res:
             self.logger.debug(f'Getting with {filter_by=}')
             return res, False
-    
+
+        defaults.update(filter_by)
         return await self.create(**defaults), True
 
     async def update(self, id: int, **values: Any) -> T:

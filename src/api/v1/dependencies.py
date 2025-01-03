@@ -7,15 +7,19 @@ from core.config import settings
 from db.unitofwork import InterfaceUnitOfWork, UnitOfWork
 from exceptions.common import InvalidTokenError, UnauthorizedError
 from schemas.admin import AdminSchema
-from schemas.user import WebAppInitData
+from schemas.user import WebAppInitData, UserSchema
 from utils.validate import validate_user_init_data
 
 
-def user_auth(init_data: WebAppInitData) -> WebAppInitData:
+def user_auth(init_data: WebAppInitData) -> UserSchema:
     if not validate_user_init_data(init_data):
         raise UnauthorizedError
 
-    return init_data
+    return UserSchema(
+        user_id=init_data.user.id,
+        username=init_data.user.username,
+        first_name=init_data.user.first_name,
+    )
 
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='/v1/admin/login')

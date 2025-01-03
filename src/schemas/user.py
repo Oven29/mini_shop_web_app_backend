@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
 
@@ -22,3 +23,10 @@ class WebAppInitData(BaseModel):
     user_validate_string: str
     auth_date: int
     hash: str
+
+
+class UserSchema(BaseModel):
+    user_id: int
+    username: Optional[str] = None
+    first_name: str
+    register_date: Optional[datetime] = None

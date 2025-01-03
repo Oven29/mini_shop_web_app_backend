@@ -11,5 +11,5 @@ class BaseException(Exception):
 async def exception_handler(request: Any, exc: BaseException) -> JSONResponse:
     return JSONResponse(
         status_code=exc.status_code,
-        content={'detail': f'{exc.status_code} - {exc.message}'},
+        content={'detail': exc.message},
     )

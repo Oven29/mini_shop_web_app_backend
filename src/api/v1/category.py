@@ -28,7 +28,7 @@ async def get_by_id(
     return await CategoryService(uow).get_by_id(category_id)
 
 
-@router.get('/get_products')
+@router.get('/get_products', tags=['product'])
 async def get_products(
     uow: UOWDep,
     category_id: int,

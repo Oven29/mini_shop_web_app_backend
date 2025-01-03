@@ -5,6 +5,7 @@ from sqlalchemy import DateTime, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from enums.order import InvoiceStatus, OrderStatus
+from schemas.order import OrderSchema
 from ..base import Base
 from .product import Product
 from .user import User
@@ -23,6 +24,8 @@ class Invoice(Base):
 
 
 class Order(Base):
+    __schema__ = OrderSchema
+
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     user: Mapped[User] = relationship()
 
