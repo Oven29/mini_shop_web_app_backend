@@ -40,3 +40,8 @@ class ProductService(AbstractService):
             self.check_result(product_id, res)
             await self.uow.commit()
             return res.to_schema()
+
+    async def search(self, query: str) -> List[ProductSchema]:
+        async with self.uow:
+            res = await self.uow.product.search(query)
+            return [e.to_schema() for e in res]

@@ -1,4 +1,6 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import select
 
 from utils.other import get_translit
 from .base import SQLAlchemyRepository, T
@@ -19,6 +21,24 @@ class CommonRepository(SQLAlchemyRepository[T]):
                 defaults['translit'] = get_translit(name)[256:]
 
         return await super().get_or_crete(defaults, **filter_by)
+
+    async def search(self, query: str) -> List[T]:
+        """
+        Search by name, translit or by id
+
+        :param query: search query
+        :return: list of records
+        """
+        res = []
+        if query.isdigit() and (item := await self.get(id=int(query))) is not None:
+            res.append(item)
+
+        searching_query = f'%{query.strip().lower()}%'
+        stmt = select(self.model).filter(
+            self.model.name.ilike(searching_query) | self.model.translit.ilike(searching_query)
+        )
+        response = await self.session.execute(stmt)
+        return res + response.scalars().all()
 
 
 class CategoryRepository(CommonRepository[Category]):

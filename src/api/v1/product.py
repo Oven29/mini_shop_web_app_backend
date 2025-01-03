@@ -34,6 +34,14 @@ async def get_by_id(
         )
 
 
+@router.get('/search')
+async def search(
+    uow: UOWDep,
+    query: str,
+) -> List[ProductSchema]:
+    return await ProductService(uow).search(query)
+
+
 @router.post('/create')
 async def create(
     uow: UOWDep,
