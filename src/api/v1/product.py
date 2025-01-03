@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, status
 
+from exceptions.product import ProductNotFoundError
 from schemas.product import ProductSchema, ProductCreateSchema, ProductUpdateSchema
 from services.product import ProductService
 from .dependencies import UOWDep, AdminAuthDep
@@ -10,15 +11,6 @@ router = APIRouter(
     prefix='/product',
     tags=['product'],
 )
-
-
-def check_exists_product(res: ProductSchema | None) -> ProductSchema:
-    if res is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='404 - Product not found',
-        )
-    return res
 
 
 @router.get('/get_all')
@@ -33,8 +25,13 @@ async def get_by_id(
     uow: UOWDep,
     product_id: int,
 ) -> ProductSchema:
-    res = await ProductService(uow).get_by_id(product_id)
-    return check_exists_product(res)
+    try:
+        return await ProductService(uow).get_by_id(product_id)
+    except ProductNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'404 - {e.message}',
+        )
 
 
 @router.post('/create')
@@ -53,8 +50,13 @@ async def update(
     product_id: int,
     product: ProductUpdateSchema,
 ) -> ProductSchema:
-    res = await ProductService(uow).update(product_id, product)
-    return check_exists_product(res)
+    try:
+        return await ProductService(uow).update(product_id, product)
+    except ProductNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'404 - {e.message}',
+        )
 
 
 @router.delete('/delete')
@@ -63,5 +65,10 @@ async def delete(
     _: AdminAuthDep,
     product_id: int,
 ) -> ProductSchema:
-    res = await ProductService(uow).delete(product_id)
-    return check_exists_product(res)
+    try:
+        return await ProductService(uow).delete(product_id)
+    except ProductNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'404 - {e.message}',
+        )
