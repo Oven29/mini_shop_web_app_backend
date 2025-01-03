@@ -1,10 +1,16 @@
-import os
+import logging
 import uvicorn
 from fastapi import FastAPI
 
 from api.v1 import v1_router
 from core.config import settings
 
+
+logging.basicConfig(
+    format='[%(asctime)s | %(levelname)s | %(name)s]: %(message)s',
+    datefmt='%m.%d.%Y %H:%M:%S',
+    level=settings.LOGGING_LEVEL,
+)
 
 app = FastAPI(
     title='Mini shop Tg web-app'

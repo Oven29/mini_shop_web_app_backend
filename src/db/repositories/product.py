@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from utils.other import get_translit
 from .base import SQLAlchemyRepository, T
@@ -28,10 +28,25 @@ class CategoryRepository(CommonRepository[Category]):
 class ProductRepository(CommonRepository[Product]):
     model = Product
 
+    def get_product_image_repository(self) -> SQLAlchemyRepository:
+        return SQLAlchemyRepository[ProductImage](self.session, ProductImage)
+
     async def create(self, **data: Any) -> Product:
         media = data.pop('media') if 'media' in data else []
         created = await super().create(**data)
-        product_image = SQLAlchemyRepository[ProductImage](self.session, ProductImage)
+        product_image = self.get_product_image_repository()
         for item in media:
             await product_image.create(product_id=created.id, media_id=item.id)
         return created
+
+    async def update(self, id: int, **values: Any) -> Optional[Product]:
+        if 'media' in values:
+            product_image = self.get_product_image_repository()
+            items = await product_image.select(product_id=id)
+            for el in items:
+                await product_image.delete(el.id)
+            media = values.pop('media')
+            for item in media:
+                await product_image.create(product_id=id, media_id=item)
+
+        return await super().update(id, **values)

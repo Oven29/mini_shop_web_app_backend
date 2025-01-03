@@ -37,7 +37,6 @@ class ProductCreateSchema(BaseModel):
 
 
 class ProductUpdateSchema(BaseModel):
-    id: int
     name: Optional[str] = None
     translit: Optional[str] = None
     description: Optional[str] = None
@@ -46,4 +45,4 @@ class ProductUpdateSchema(BaseModel):
     discount: Optional[int] = None
     discount_expire: Optional[datetime] = None
     amount: Optional[int] = None
-    media: List[MediaSchema] = []
+    media: Optional[List[MediaSchema]] = None

@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
@@ -9,6 +10,8 @@ from utils.other import to_snake_case
 
 engine = create_async_engine(settings.DATABASE_URL, echo=settings.DEBUG)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
+
+logger = logging.getLogger(__name__)
 
 
 class Base(DeclarativeBase, AsyncAttrs):
@@ -35,6 +38,7 @@ class Base(DeclarativeBase, AsyncAttrs):
                 value = value.to_schema()
             fields[field] = value
 
+        logger.debug(f'Autogenerating schema {self.__class__.__name__} {fields=} {instance_values=}')
         return self.__schema__(**fields)
 
 

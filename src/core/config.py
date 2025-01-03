@@ -25,6 +25,7 @@ class DbSettings(BaseModel):
 class Settings(BaseSettings):
     DEBUG: bool = False
     RELOAD: bool = DEBUG
+    LOGGING_LEVEL: str = 'DEBUG' if DEBUG else 'WARNING'
 
     HOST: str = '0.0.0.0'
     PORT: int = 8000
