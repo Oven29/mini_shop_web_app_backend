@@ -9,7 +9,7 @@ from .dependencies import UOWDep, AdminAuthDep
 
 router = APIRouter(
     prefix='/category',
-    tags=['category', 'product'],
+    tags=['category'],
 )
 
 
