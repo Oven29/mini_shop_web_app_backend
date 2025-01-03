@@ -46,4 +46,4 @@ def create_jwt_access_token(data: Dict[str, Any]) -> str:
 
 
 def create_admin_access_token(admin: AdminSchema) -> str:
-    return create_jwt_access_token(admin.to_dict())
+    return create_jwt_access_token(admin.model_dump())

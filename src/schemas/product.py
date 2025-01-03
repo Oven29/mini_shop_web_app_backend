@@ -24,18 +24,26 @@ class ProductSchema(BaseModel):
     media: List[MediaSchema] = []
 
 
-class ProductCreateSchema(ProductSchema):
-    id: None = None
+class ProductCreateSchema(BaseModel):
+    name: str
     translit: Optional[str] = None
+    description: Optional[str] = None
+    price: int
+    category_id: int
+    discount: Optional[int] = None
+    discount_expire: Optional[datetime] = None
+    amount: Optional[int] = None
+    media: List[MediaSchema] = []
 
 
-class ProductUpdateSchema(ProductSchema):
+class ProductUpdateSchema(BaseModel):
+    id: int
     name: Optional[str] = None
     translit: Optional[str] = None
-    price: Optional[str] = None
-    category: None = None
+    description: Optional[str] = None
+    price: Optional[int] = None
     category_id: Optional[int] = None
-
-
-class ProductDeleteSchema(BaseModel):
-    id: int = None
+    discount: Optional[int] = None
+    discount_expire: Optional[datetime] = None
+    amount: Optional[int] = None
+    media: List[MediaSchema] = []

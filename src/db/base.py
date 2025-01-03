@@ -26,7 +26,7 @@ class Base(DeclarativeBase, AsyncAttrs):
             return
 
         fields = {}
-        for field in self.__schema__.model_fields.keys():
+        for field in self.__schema__.model_fields.keys() and hasattr(self, field):
             value = getattr(self, field)
             if isinstance(value, Base):
                 value = value.to_schema()

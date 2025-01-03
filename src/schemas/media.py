@@ -5,5 +5,6 @@ from enums.media import TypeMedia
 
 
 class MediaSchema(BaseModel):
-    media_id: str
+    id: int
+    media_id: Optional[str] = None
     type: Optional[TypeMedia] = None

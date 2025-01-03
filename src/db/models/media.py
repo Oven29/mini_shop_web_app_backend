@@ -4,12 +4,14 @@ from sqlalchemy import DateTime, Enum, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from enums.media import TypeMedia, LocationMedia
+from schemas.media import MediaSchema
 from utils.other import get_rand_string
 from ..base import Base
 
 
 class Media(Base):
     __tablename__ = 'media'
+    __schema__ = MediaSchema
 
     media_id: Mapped[str] = mapped_column(String(64), default=lambda: get_rand_string(64), unique=True)
     weight: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)

@@ -2,9 +2,22 @@ from abc import ABC, abstractmethod
 from typing import Type
 
 from .base import async_session_maker
+from .repositories.admin import AdminRepository
+from .repositories.media import MediaRepository
+from .repositories.order import OrderRepository, InvoiceRepository
+from .repositories.product import CategoryRepository, ProductRepository
+from .repositories.user import UserRepository
 
 
-class InterfaceUnitOfWork(ABC):    
+class InterfaceUnitOfWork(ABC):
+    admin: Type[AdminRepository]
+    media: Type[MediaRepository]
+    order: Type[OrderRepository]
+    invoice: Type[InvoiceRepository]
+    category: Type[CategoryRepository]
+    product: Type[ProductRepository]
+    user: Type[UserRepository]
+
     @abstractmethod
     def __init__(self):
         raise NotImplementedError
@@ -32,6 +45,14 @@ class UnitOfWork(InterfaceUnitOfWork):
 
     async def __aenter__(self):
         self.session = self.session_factory()
+    
+        self.admin = AdminRepository(self.session)
+        self.media = MediaRepository(self.session)
+        self.order = OrderRepository(self.session)
+        self.invoice = InvoiceRepository(self.session)
+        self.category = CategoryRepository(self.session)
+        self.product = ProductRepository(self.session)
+        self.user = UserRepository(self.session)
 
     async def __aexit__(self, *args):
         await self.rollback()
