@@ -3,8 +3,8 @@ from ..models.order import Order, Invoice
 
 
 class InvoiceRepository(SQLAlchemyRepository[Invoice]):
-    pass
+    model = Invoice
 
 
 class OrderRepository(SQLAlchemyRepository[Order]):
-    pass
+    model = Invoice

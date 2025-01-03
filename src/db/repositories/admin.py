@@ -3,4 +3,4 @@ from ..models.admin import Admin
 
 
 class AdminRepository(SQLAlchemyRepository[Admin]):
-    pass
+    model = Admin

@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Optional
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
@@ -26,8 +26,11 @@ class Base(DeclarativeBase, AsyncAttrs):
             return
 
         fields = {}
-        for field in self.__schema__.model_fields.keys() and hasattr(self, field):
-            value = getattr(self, field)
+        instance_values = vars(self)
+        for field in self.__schema__.model_fields.keys():
+            if field not in instance_values:
+                continue
+            value = instance_values[field]
             if isinstance(value, Base):
                 value = value.to_schema()
             fields[field] = value

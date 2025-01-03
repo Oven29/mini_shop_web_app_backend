@@ -1,5 +1,6 @@
 from __future__ import annotations
 from datetime import datetime
+from typing import List
 from sqlalchemy import DateTime, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -33,6 +34,8 @@ class Order(Base):
     discount: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
+
+    items: Mapped[List[OrderItem]] = relationship(back_populates='order', cascade='all, delete-orphan')
 
 
 class OrderItem(Base):

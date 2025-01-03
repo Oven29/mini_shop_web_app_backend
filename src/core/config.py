@@ -24,6 +24,7 @@ class DbSettings(BaseModel):
 
 class Settings(BaseSettings):
     DEBUG: bool = False
+    RELOAD: bool = DEBUG
 
     HOST: str = '0.0.0.0'
     PORT: int = 8000

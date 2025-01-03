@@ -38,5 +38,6 @@ class Product(Base):
 class ProductImage(Base):
     media_id: Mapped[int] = mapped_column(ForeignKey('media.id'))
     media: Mapped[Media] = relationship()
+
     product_id: Mapped[int] = mapped_column(ForeignKey('products.id'))
     product: Mapped[Product] = relationship(back_populates='media')

@@ -3,4 +3,4 @@ from ..models.user import User
 
 
 class UserRepository(SQLAlchemyRepository[User]):
-    pass
+    model = User

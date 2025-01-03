@@ -3,4 +3,4 @@ from ..models.media import Media
 
 
 class MediaRepository(SQLAlchemyRepository[Media]):
-    pass
+    model = Media

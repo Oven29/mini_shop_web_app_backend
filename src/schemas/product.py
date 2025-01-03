@@ -17,7 +17,7 @@ class ProductSchema(BaseModel):
     translit: str
     description: Optional[str] = None
     price: int
-    category: CategorySchema
+    category: Optional[CategorySchema] = None
     discount: Optional[int] = None
     discount_expire: Optional[datetime] = None
     amount: Optional[int] = None

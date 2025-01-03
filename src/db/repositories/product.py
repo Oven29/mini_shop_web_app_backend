@@ -22,16 +22,16 @@ class CommonRepository(SQLAlchemyRepository[T]):
 
 
 class CategoryRepository(CommonRepository[Category]):
-    pass
+    model = Category
 
 
 class ProductRepository(CommonRepository[Product]):
-    async def create(self, **data: Any) -> T:
+    model = Product
+
+    async def create(self, **data: Any) -> Product:
+        media = data.pop('media') if 'media' in data else []
         created = await super().create(**data)
-        product_image = SQLAlchemyRepository[ProductImage](self.session)
-        product_media = []
-        for media in data.get('media', []):
-            cur_media = await product_image.create(product_id=created.id, media_id=media.id)
-            product_media.append(cur_media)
-        created.media = product_media
+        product_image = SQLAlchemyRepository[ProductImage](self.session, ProductImage)
+        for item in media:
+            await product_image.create(product_id=created.id, media_id=item.id)
         return created
