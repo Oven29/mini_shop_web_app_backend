@@ -11,7 +11,7 @@ class ProductService(AbstractService):
             res = await self.uow.product.select()
             return [e.to_schema() for e in res]
 
-    def check_result(self, id: int, res: ProductSchema | None):
+    def check_result(self, id: int, res: ProductSchema | None) -> None:
         if res is None:
             raise ProductNotFoundError(id)
 
@@ -23,7 +23,7 @@ class ProductService(AbstractService):
 
     async def create(self, product: ProductCreateSchema) -> ProductSchema:
         async with self.uow:
-            res = await self.uow.product.create(**product.model_dump())
+            res = await self.uow.product.create(**product.model_dump(exclude_unset=True))
             await self.uow.commit()
             return res.to_schema()
 

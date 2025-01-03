@@ -10,7 +10,7 @@ from ..models.product import Product, Category, ProductImage
 class CommonRepository(SQLAlchemyRepository[T]):
     async def create(self, **data: Any) -> T:
         if 'translit' not in data:
-            data['translit'] = get_translit(data['name'])[256:]
+            data['translit'] = get_translit(data['name'])[:256]
 
         return await super().create(**data)
 
@@ -18,7 +18,7 @@ class CommonRepository(SQLAlchemyRepository[T]):
         if 'translit' not in defaults and 'translit' not in filter_by:
             name = defaults.get('name') or filter_by.get('name')
             if name:
-                defaults['translit'] = get_translit(name)[256:]
+                defaults['translit'] = get_translit(name)[:256]
 
         return await super().get_or_crete(defaults, **filter_by)
 

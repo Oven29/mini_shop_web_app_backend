@@ -1,7 +1,6 @@
 from typing import List
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter
 
-from exceptions.product import ProductNotFoundError
 from schemas.product import ProductSchema, ProductCreateSchema, ProductUpdateSchema
 from services.product import ProductService
 from .dependencies import UOWDep, AdminAuthDep
@@ -25,13 +24,7 @@ async def get_by_id(
     uow: UOWDep,
     product_id: int,
 ) -> ProductSchema:
-    try:
-        return await ProductService(uow).get_by_id(product_id)
-    except ProductNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'404 - {e.message}',
-        )
+    return await ProductService(uow).get_by_id(product_id)
 
 
 @router.get('/search')
@@ -58,13 +51,7 @@ async def update(
     product_id: int,
     product: ProductUpdateSchema,
 ) -> ProductSchema:
-    try:
-        return await ProductService(uow).update(product_id, product)
-    except ProductNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'404 - {e.message}',
-        )
+    return await ProductService(uow).update(product_id, product)
 
 
 @router.delete('/delete')
@@ -73,10 +60,4 @@ async def delete(
     _: AdminAuthDep,
     product_id: int,
 ) -> ProductSchema:
-    try:
-        return await ProductService(uow).delete(product_id)
-    except ProductNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'404 - {e.message}',
-        )
+    return await ProductService(uow).delete(product_id)

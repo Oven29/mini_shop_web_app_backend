@@ -3,12 +3,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from .media import MediaSchema
-
-
-class CategorySchema(BaseModel):
-    id: int
-    name: str
-    translit: str
+from .category import CategorySchema
 
 
 class ProductSchema(BaseModel):
