@@ -4,12 +4,14 @@ from typing import List, Optional
 from sqlalchemy import DateTime, ForeignKey, String, Text, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from schemas.product import CategorySchema, ProductSchema
 from ..base import Base
 from .media import Media
 
 
 class Category(Base):
     __tablename__ = 'categories'
+    __schema__ = CategorySchema
 
     name: Mapped[str] = mapped_column(String(256), nullable=False)
     translit: Mapped[str] = mapped_column(String(256), nullable=False)
@@ -17,6 +19,8 @@ class Category(Base):
 
 
 class Product(Base):
+    __schema__ = ProductSchema
+
     name: Mapped[str] = mapped_column(String(256), nullable=False)
     translit: Mapped[str] = mapped_column(String(256), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

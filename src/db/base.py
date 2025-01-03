@@ -24,10 +24,15 @@ class Base(DeclarativeBase, AsyncAttrs):
     def to_schema(self) -> Optional[BaseModel]:
         if self.__schema__ is None:
             return
-        return self.__schema__(**{
-            field: getattr(self, field)
-            for field in self.__schema__.model_fields.keys()
-        })
+
+        fields = {}
+        for field in self.__schema__.model_fields.keys():
+            value = getattr(self, field)
+            if isinstance(value, Base):
+                value = value.to_schema()
+            fields[field] = value
+
+        return self.__schema__(**fields)
 
 
 async def get_async_session():

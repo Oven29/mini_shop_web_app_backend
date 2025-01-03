@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-import sys
 from typing import Optional
 from pydantic import BaseModel
 import pydantic
