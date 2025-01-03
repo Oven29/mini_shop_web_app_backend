@@ -12,7 +12,7 @@ def get_translit(text: str) -> str:
     :param text: text for translit
     :return: translit string
     """
-    return unidecode(text).replace(' ', '_').lower()
+    return unidecode(text.replace('-', ' ').strip()).replace(' ', '_').lower()
 
 
 def get_rand_string(length: int, base: Optional[str] = None) -> str:

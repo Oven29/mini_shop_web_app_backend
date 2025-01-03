@@ -42,9 +42,9 @@ class AbstractRepository(ABC, Generic[T]):
         raise NotImplementedError
 
     @abstractmethod
-    async def update(self, id: int, **filter_by: Any) -> Optional[T]:
+    async def update(self, id: int, **filter_by: Any) -> T:
         """
-        Update record by id, if exists, else return None
+        Update record by id
 
         :param id: record id
         :param filter_by: data for update
@@ -53,9 +53,9 @@ class AbstractRepository(ABC, Generic[T]):
         raise NotImplementedError
 
     @abstractmethod
-    async def delete(self, id: int) -> Optional[T]:
+    async def delete(self, id: int) -> T:
         """
-        Delete record by id, if exists, else return None
+        Delete record by id
 
         :param id: record id
         :return: deleted record or None

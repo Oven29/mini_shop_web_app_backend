@@ -59,7 +59,7 @@ class ProductRepository(CommonRepository[Product]):
             await product_image.create(product_id=created.id, media_id=item.id)
         return created
 
-    async def update(self, id: int, **values: Any) -> Optional[Product]:
+    async def update(self, id: int, **values: Any) -> Product:
         if 'media' in values:
             product_image = self.get_product_image_repository()
             items = await product_image.select(product_id=id)

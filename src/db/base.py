@@ -24,21 +24,20 @@ class Base(DeclarativeBase, AsyncAttrs):
     def __tablename__(cls) -> str:
         return f'{to_snake_case(cls.__name__)}s'
 
-    def to_schema(self) -> Optional[BaseModel]:
+    async def to_schema(self) -> Optional[BaseModel]:
         if self.__schema__ is None:
             return
 
         fields = {}
-        instance_values = vars(self)
         for field in self.__schema__.model_fields.keys():
-            if field not in instance_values:
+            if not hasattr(self, field):
                 continue
-            value = instance_values[field]
+            value = getattr(self, field)
             if isinstance(value, Base):
-                value = value.to_schema()
+                value = await value.to_schema()
             fields[field] = value
 
-        logger.debug(f'Autogenerating schema {self.__class__.__name__} {fields=} {instance_values=}')
+        logger.debug(f'Autogenerating schema {self.__class__.__name__} {fields=}')
         return self.__schema__(**fields)
 
 

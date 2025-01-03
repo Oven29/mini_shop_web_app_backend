@@ -2,6 +2,7 @@ import logging
 from typing import Any, Dict, List, Optional, Tuple, Type
 from sqlalchemy import insert, select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from .abstract import AbstractRepository, T
 
@@ -23,7 +24,7 @@ class SQLAlchemyRepository(AbstractRepository[T]):
 
     async def get(self, **filter_by: Any) -> Optional[T]:
         self.logger.debug(f'Getting with {filter_by=}')
-        stmt = select(self.model).filter_by(**filter_by)
+        stmt = select(self.model).filter_by(**filter_by).options(selectinload('*'))
         res = await self.session.execute(stmt)
         res = res.scalar_one_or_none()
         return res
@@ -38,19 +39,13 @@ class SQLAlchemyRepository(AbstractRepository[T]):
     
         return await self.create(**defaults), True
 
-    async def update(self, id: int, **values: Any) -> Optional[T]:
-        if await self.get(id=id) is None:
-            return
-
+    async def update(self, id: int, **values: Any) -> T:
         self.logger.debug(f'Updating with {id=} {values=}')
         stmt = update(self.model).where(self.model.id == id).values(**values).returning(self.model)
         res = await self.session.execute(stmt)
         return res.scalar_one()
 
-    async def delete(self, id: int) -> Optional[T]:
-        if await self.get(id=id) is None:
-            return
-
+    async def delete(self, id: int) -> T:
         self.logger.debug(f'Deleting with {id=}')
         stmt = delete(self.model).filter_by(id=id).returning(self.model)
         res = await self.session.execute(stmt)
@@ -58,6 +53,6 @@ class SQLAlchemyRepository(AbstractRepository[T]):
 
     async def select(self, **filer_by: Any) -> List[T]:
         self.logger.debug(f'Selecting with {filer_by=}')
-        stmt = select(self.model).filter_by(**filer_by)
+        stmt = select(self.model).filter_by(**filer_by).options(selectinload('*'))
         res = await self.session.execute(stmt)
         return res.scalars().all()

@@ -14,7 +14,8 @@ logging.basicConfig(
 )
 
 app = FastAPI(
-    title='Mini shop Tg web-app'
+    title='Mini shop Tg web-app',
+    debug=settings.DEBUG,
 )
 
 app.add_exception_handler(BaseException, exception_handler)

@@ -2,13 +2,14 @@ from typing import List
 from fastapi import APIRouter
 
 from schemas.category import CategorySchema, CategoryCreateSchema, CategoryUpdateSchema
+from schemas.product import ProductSchema
 from services.category import CategoryService
 from .dependencies import UOWDep, AdminAuthDep
 
 
 router = APIRouter(
     prefix='/category',
-    tags=['category'],
+    tags=['category', 'product'],
 )
 
 
@@ -27,12 +28,12 @@ async def get_by_id(
     return await CategoryService(uow).get_by_id(category_id)
 
 
-@router.get('/search')
-async def search(
+@router.get('/get_products')
+async def get_products(
     uow: UOWDep,
-    query: str,
-) -> List[CategorySchema]:
-    return await CategoryService(uow).search(query)
+    category_id: int,
+) -> List[ProductSchema]:
+    return await CategoryService(uow).get_products(category_id)
 
 
 @router.post('/create')
