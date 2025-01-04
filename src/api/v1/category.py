@@ -20,7 +20,7 @@ async def get_all(
     return await CategoryService(uow).get_all()
 
 
-@router.get('/get_by_id')
+@router.get('/get_by_id/{category_id}')
 async def get_by_id(
     uow: UOWDep,
     category_id: int,
@@ -28,7 +28,7 @@ async def get_by_id(
     return await CategoryService(uow).get_by_id(category_id)
 
 
-@router.get('/get_products', tags=['product'])
+@router.get('/get_products/{category_id}', tags=['product'])
 async def get_products(
     uow: UOWDep,
     category_id: int,
@@ -45,7 +45,7 @@ async def create(
     return await CategoryService(uow).create(product)
 
 
-@router.put('/update')
+@router.put('/update/{category_id}')
 async def update(
     uow: UOWDep,
     _: AdminAuthDep,
@@ -55,7 +55,7 @@ async def update(
     return await CategoryService(uow).update(category_id, product)
 
 
-@router.delete('/delete')
+@router.delete('/delete/{category_id}')
 async def delete(
     uow: UOWDep,
     _: AdminAuthDep,

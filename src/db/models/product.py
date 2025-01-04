@@ -4,7 +4,8 @@ from typing import List, Optional
 from sqlalchemy import DateTime, ForeignKey, String, Text, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from schemas.product import CategorySchema, ProductSchema
+from schemas.category import CategorySchema
+from schemas.product import ProductSchema
 from ..base import Base
 from .media import Media
 

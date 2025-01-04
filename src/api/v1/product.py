@@ -19,7 +19,7 @@ async def get_all(
     return await ProductService(uow).get_all()
 
 
-@router.get('/get_by_id')
+@router.get('/get_by_id/{product_id}')
 async def get_by_id(
     uow: UOWDep,
     product_id: int,
@@ -27,7 +27,7 @@ async def get_by_id(
     return await ProductService(uow).get_by_id(product_id)
 
 
-@router.get('/search')
+@router.get('/search/{query}')
 async def search(
     uow: UOWDep,
     query: str,
@@ -44,7 +44,7 @@ async def create(
     return await ProductService(uow).create(product)
 
 
-@router.put('/update')
+@router.put('/update/{product_id}')
 async def update(
     uow: UOWDep,
     _: AdminAuthDep,
@@ -54,7 +54,7 @@ async def update(
     return await ProductService(uow).update(product_id, product)
 
 
-@router.delete('/delete')
+@router.delete('/delete/{product_id}')
 async def delete(
     uow: UOWDep,
     _: AdminAuthDep,

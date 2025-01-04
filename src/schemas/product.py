@@ -3,7 +3,6 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from .media import MediaSchema
-from .category import CategorySchema
 
 
 class ProductSchema(BaseModel):
@@ -12,7 +11,7 @@ class ProductSchema(BaseModel):
     translit: str
     description: Optional[str] = None
     price: int
-    category: Optional[CategorySchema] = None
+    category_id: int
     discount: Optional[int] = None
     discount_expire: Optional[datetime] = None
     amount: Optional[int] = None
