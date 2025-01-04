@@ -1,6 +1,6 @@
 from __future__ import annotations
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from sqlalchemy import DateTime, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -17,10 +17,11 @@ class Invoice(Base):
 
     order: Mapped[Order] = relationship(back_populates='invoice')
 
+    pay_id: Mapped[str] = mapped_column(String(256))
     amount: Mapped[float] = mapped_column(Float)
     status: Mapped[InvoiceStatus] = mapped_column(Enum(InvoiceStatus, native_enum=False))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
-    type: Mapped[str] = mapped_column(String(32))
+    method: Mapped[str] = mapped_column(String(32))
 
 
 class Order(Base):

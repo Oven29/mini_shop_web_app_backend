@@ -8,7 +8,7 @@ from core.config import settings
 from utils.other import to_snake_case
 
 
-engine = create_async_engine(settings.db.url, echo=settings.app.debug)
+engine = create_async_engine(settings.db.url.get_secret_value(), echo=settings.app.debug)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 logger = logging.getLogger(__name__)

@@ -12,7 +12,7 @@ from urllib.parse import quote, urlparse
 _base_dir = Path(__file__).resolve().parent.parent.parent
 
 
-class ConfigError(Exception):
+class ConfigError(ValueError):
     pass
 
 
@@ -109,7 +109,7 @@ class DatabaseConfig(ConfigBase):
     @model_validator(mode='after')
     def validate(self) -> Self:
         if self.host and self.port and self.user and self.password and self.name:
-            self.url = (
+            self.url = SecretStr(
                 f'{self.driver}://{quote(self.user)}:{quote(self.password.get_secret_value())}'
                 f'@{self.host}:{self.port}/{self.name}'
             )
@@ -120,7 +120,7 @@ class DatabaseConfig(ConfigBase):
             self.host = parsed_url.hostname
             self.port = parsed_url.port
             self.user = parsed_url.username
-            self.password = parsed_url.password
+            self.password = SecretStr(parsed_url.password)
             self.name = parsed_url.path
 
         else:

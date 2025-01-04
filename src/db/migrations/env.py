@@ -20,7 +20,7 @@ from db.base import Base
 
 config = context.config
 
-config.set_main_option("sqlalchemy.url", settings.db.url)
+config.set_main_option("sqlalchemy.url", settings.db.url.get_secret_value())
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -53,11 +53,11 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    render_as_batch = config.get_main_option("sqlalchemy.url").startswith("sqlite")
+    # render_as_batch = config.get_main_option("sqlalchemy.url").startswith("sqlite")
     context.configure(
         connection=connection,
-        target_metadata=target_metadata,    
-        render_as_batch=render_as_batch,
+        target_metadata=target_metadata,
+        render_as_batch=True,
     )
 
     with context.begin_transaction():
