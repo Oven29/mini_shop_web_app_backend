@@ -42,7 +42,8 @@ class SQLAlchemyRepository(AbstractRepository[T]):
 
     async def update(self, id: int, **values: Any) -> T:
         self.logger.debug(f'Updating with {id=} {values=}')
-        stmt = update(self.model).where(self.model.id == id).values(**values).returning(self.model)
+        stmt = update(self.model).where(self.model.id == id).values(**values).\
+            options(selectinload('*')).returning(self.model)
         res = await self.session.execute(stmt)
         return res.scalar_one()
 

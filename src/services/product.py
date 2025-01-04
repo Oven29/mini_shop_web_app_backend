@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from exceptions.product import ProductNotFoundError
+from exceptions.media import MediaNotFoundError
 from schemas.product import ProductSchema, ProductCreateSchema, ProductUpdateSchema
 from .base import AbstractService
 
@@ -31,6 +32,11 @@ class ProductService(AbstractService):
     async def update(self, product_id: int, product: ProductUpdateSchema) -> ProductSchema:
         async with self.uow:
             await self.check_exists(product_id)
+            if product.media:
+                for item in product.media:
+                    if await self.uow.media.get(id=item) is None:
+                        raise MediaNotFoundError(item)
+
             res = await self.uow.product.update(id=product_id, **product.model_dump(exclude_none=True))
             await self.uow.commit()
             return await res.to_schema()

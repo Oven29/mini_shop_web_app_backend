@@ -39,4 +39,4 @@ class ProductUpdateSchema(BaseModel):
     discount: Optional[int] = None
     discount_expire: Optional[datetime] = None
     amount: Optional[int] = None
-    media: Optional[List[MediaSchema]] = None
+    media: Optional[List[int]] = None

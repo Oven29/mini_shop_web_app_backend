@@ -1,7 +1,7 @@
 import random
 import re
 from string import hexdigits
-from typing import Optional
+from typing import BinaryIO, Optional
 from unidecode import unidecode
 
 
@@ -34,3 +34,16 @@ def to_snake_case(text: str) -> str:
     :return: snake case string
     """
     return re.sub(r'([a-z])([A-Z])', r'\1_\2', text).lower()
+
+
+def get_file_size(file: BinaryIO) -> int:
+    """
+    Get file size
+
+    :param file: file for get size
+    :return: file size
+    """
+    file.seek(0, 2)
+    size = file.tell()
+    file.seek(0)
+    return size

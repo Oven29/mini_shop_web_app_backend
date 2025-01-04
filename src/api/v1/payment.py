@@ -25,26 +25,25 @@ async def create_invoice(
     return
 
 
-@router.post('/get_invoice')
-async def get_invoice(
+@router.post('/get/{invoice_id}')
+async def get_invoice_by_user(
     uow: UOWDep,
     user: UserAuthDep,
 ):
-    """Get by user"""
     return
 
 
-@router.get('/get')
-async def get(
+@router.get('/get/{invoice_id}')
+async def get_invoice_by_admin(
     uow: UOWDep,
     admin: AdminAuthDep,
 ):
-    """Get by admin"""
     return
 
 
-@router.post('/webhook')
+@router.post('/webhook/{method}')
 async def paymant_webhook(
     uow: UOWDep,
+    method: str,
 ):
     return

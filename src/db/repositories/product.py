@@ -68,5 +68,7 @@ class ProductRepository(CommonRepository[Product]):
             media = values.pop('media')
             for item in media:
                 await product_image.create(product_id=id, media_id=item)
+            if len(values) == 0:
+                return await self.get(id=id)
 
         return await super().update(id, **values)

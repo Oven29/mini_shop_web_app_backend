@@ -17,26 +17,20 @@ async def reserve(
     return
 
 
-@router.post('/confirm')
-async def confirm(
-    uow: UOWDep,
-    user: UserAuthDep,
-):
-    return
-
-
-@router.post('/cancel')
+@router.post('/cancel/{order_id}')
 async def cancel(
     uow: UOWDep,
     user: UserAuthDep,
+    order_id: int,
 ):
     pass
 
 
-@router.post('/get')
+@router.post('/get/{order_id}')
 async def get(
     uow: UOWDep,
     user: UserAuthDep,
+    order_id: int,
 ):
     return
 
@@ -49,7 +43,7 @@ async def get_all(
     return
 
 
-@router.post('/delete')
+@router.post('/delete/{order_id}')
 async def delete(
     uow: UOWDep,
     _: AdminAuthDep,

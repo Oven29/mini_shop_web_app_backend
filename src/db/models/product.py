@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from schemas.category import CategorySchema
 from schemas.product import ProductSchema
+from schemas.media import MediaSchema
 from ..base import Base
 from .media import Media
 
@@ -42,3 +43,6 @@ class ProductImage(Base):
 
     product_id: Mapped[int] = mapped_column(ForeignKey('products.id'))
     product: Mapped[Product] = relationship(back_populates='media')
+
+    async def to_schema(self) -> MediaSchema:
+        return await self.media.to_schema()

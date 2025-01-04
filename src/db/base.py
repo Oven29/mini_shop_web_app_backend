@@ -24,7 +24,7 @@ class Base(DeclarativeBase, AsyncAttrs):
     def __tablename__(cls) -> str:
         return f'{to_snake_case(cls.__name__)}s'
 
-    async def to_schema(self) -> Optional[BaseModel]:
+    async def to_schema(self, **kwargs: Any) -> Optional[BaseModel]:
         if self.__schema__ is None:
             return
 
@@ -35,11 +35,12 @@ class Base(DeclarativeBase, AsyncAttrs):
                 return [await validate_field(e) for e in obj]
             return obj
 
-        fields = {
+        fields = kwargs.copy()
+        fields.update({
             field: await validate_field(getattr(self, field))
               for field in self.__schema__.model_fields.keys()
               if hasattr(self, field)
-        }
+        })
 
         logger.debug(f'Autogenerating schema {self.__class__.__name__} {fields=}')
         return self.__schema__(**fields)

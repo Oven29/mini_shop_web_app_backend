@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel
 import pydantic
 from pydantic_settings import BaseSettings
@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     SECRET_KEY: str = '123456789abc'
     ALGORITHM: str = 'HS256'
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+    MAX_FILE_SIZE: int = 16 * 1024 * 1024  # 16 MB
+    AVAILABLE_EXTENSIONS: List[str] = ['jpg', 'jpeg', 'png', 'mp4']
+    BASE_URL: str = 'http://localhost:8000'
 
     @pydantic.computed_field()
     def DATABASE_URL(self) -> str:

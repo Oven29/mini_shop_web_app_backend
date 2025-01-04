@@ -9,7 +9,7 @@ __pycache__/
 *.pyc
 #
 .env
-.env.dev
+config.toml
 # logs
 logs/
 *.log
