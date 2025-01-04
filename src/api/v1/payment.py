@@ -42,7 +42,7 @@ async def get_invoice_by_admin(
 
 
 @router.post('/webhook/{method}')
-async def paymant_webhook(
+async def payment_webhook(
     uow: UOWDep,
     method: str,
 ):

@@ -27,7 +27,7 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl='/v1/admin/login')
 
 def admin_auth(token: Annotated[str, Depends(oauth2_bearer)]) -> AdminSchema:
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(token, settings.app.secret_key, algorithms=[settings.auth.algorithm])
     except JWTError:
         raise InvalidTokenError
 

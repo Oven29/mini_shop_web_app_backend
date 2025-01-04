@@ -3,7 +3,7 @@ import shutil
 from fastapi import UploadFile
 from fastapi.responses import FileResponse
 
-from core.config import settings, UPLOADS_DIR
+from core.config import settings
 from db.models.media import Media
 from enums.media import TypeMedia, LocationMedia
 from exceptions.media import MediaNotFoundError, FileTooLargeError, NotAvaliableExtensionError
@@ -15,7 +15,7 @@ from .base import AbstractService
 class MediaService(AbstractService):
     async def get_url(self, media_id: str, location: LocationMedia) -> str:
         if location == LocationMedia.LOCAL:
-            return f'{settings.BASE_URL}/v1/media/{media_id}'
+            return f'{settings.project.backend_url}/v1/media/{media_id}'
         raise MediaNotFoundError(media_id)
 
     async def get_media(self, media_id: str) -> Media:
@@ -26,7 +26,7 @@ class MediaService(AbstractService):
 
     async def upload(self, file: UploadFile) -> MediaSchema:
         weight = get_file_size(file.file)
-        if weight > settings.MAX_FILE_SIZE:
+        if weight > settings.file.max_size:
             raise FileTooLargeError
 
         extension = file.filename.split('.')[-1]
@@ -36,7 +36,7 @@ class MediaService(AbstractService):
         media_id = get_rand_string(64)
         file_type = TypeMedia.VIDEO if extension == 'mp4' else TypeMedia.IMAGE
         filename = f'{media_id}.{extension}'
-        filepath = os.path.join(UPLOADS_DIR, filename)
+        filepath = os.path.join(settings.dir.uploads, filename)
 
         with open(filepath, 'wb') as buffer:
             shutil.copyfileobj(file.file, buffer)
@@ -70,5 +70,5 @@ class MediaService(AbstractService):
         async with self.uow:
             res = await self.get_media(media_id=media_id)
             return FileResponse(
-                path=os.path.join(UPLOADS_DIR, res.filename),
+                path=os.path.join(settings.dir.uploads, res.filename),
             )
