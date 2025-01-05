@@ -1,0 +1,22 @@
+#
+.idea/
+.vscode/
+#
+.venv/
+venv/
+# cache
+__pycache__/
+*.pyc
+# logs
+logs/
+*.log
+# data
+*.db
+*.sqlite3
+*.sqlite
+uploads/
+# unnecessary
+.gitignore
+.git/
+README.md
+LICENSE

@@ -5,7 +5,7 @@ This backend for "Mini shop" tg web app
 *Pay methods*:
 
 * [Yookassa](https://yookassa.ru/)
-* [CryptoBot](https://t.me/send) 
+* [CryptoBot](https://t.me/send)
 
 ### Techonoligies
 
@@ -24,6 +24,7 @@ This backend for "Mini shop" tg web app
 * `.env` - environment variables
 
 Example:
+
 ```env
 # TG
 TG_BOT_TOKEN=123:ABCDEFGHIJKLMNOPQRSTUVWXYZ  # Get from https://t.me/BotFather
@@ -57,6 +58,7 @@ DB_URL=postgres+asyncpg://postgres:qwerty@localhost:5432/postgres
 All variables from this file is optional
 
 Example:
+
 ```.toml
 [dir]
 base='./'
@@ -95,17 +97,18 @@ datefmt='%m.%d.%Y %H:%M:%S'
 
 ### Run project
 
-* Using docker: 
+* Using docker:
+
 ```bash
 docker-compose up -d --build
 ```
 
 ### TODO
 
-- [ ] Create docker files
+- [X] Create docker files
 - [ ] Create order routes
 - [ ] Create tests
-- [ ] Create bot routes and handlers 
+- [ ] Create bot routes and handlers
 - [ ] Add notifications
 
 ### Project hierarchy
