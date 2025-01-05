@@ -1,6 +1,7 @@
 import os
 from typing import Optional, Self
 from urllib.parse import quote, urlparse
+import requests
 from pydantic import SecretStr, computed_field, model_validator
 from pydantic_settings import SettingsConfigDict
 
@@ -50,8 +51,19 @@ class TelegramConfig(ConfigBase):
     model_config = SettingsConfigDict(env_prefix='TG_')
 
     bot_token: SecretStr
-    bot_username: str
+    bot_username: Optional[str] = None
 
-    @computed_field
+    @computed_field()
     def bot_url(self) -> str:
         return f'https://t.me/{self.bot_username}'
+
+    @model_validator(mode='after')
+    def validate(self) -> Self:
+        if self.bot_username is None:
+            response = requests.get(f'https://api.telegram.org/bot{self.bot_token.get_secret_value()}/getMe')
+            response = response.json()
+            if not response['ok']:
+                raise ConfigError('Wrong bot token configured')
+            self.bot_username = response['result']['username']
+
+        return self

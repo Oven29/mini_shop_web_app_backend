@@ -22,7 +22,7 @@ class RedisSettings(BaseModel):
     host: str = 'localhost'
     port: int = 6379
 
-    @computed_field
+    @computed_field()
     def url(self) -> str:
         return f'redis://{self.host}:{self.port}'
 
@@ -35,8 +35,9 @@ class FastapiSettings(BaseModel):
 
 
 class ProjectSettings(BaseModel):
-    backend_url: Optional[str] = 'http://localhost:8000'
-    frontend_url: Optional[str] = 'http://localhost:3000'
+    backend_url: str = 'http://localhost:8000'
+    frontend_url: str = 'http://localhost:3000'
+    payment_time_life: int = 60
 
 
 class FileSettings(BaseModel):

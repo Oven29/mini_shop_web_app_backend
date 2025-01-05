@@ -3,7 +3,7 @@ from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-base_dir = Path(__file__).resolve().parent.parent.parent
+base_dir = Path(__file__).resolve().parents[3]
 
 
 class ConfigError(ValueError):
