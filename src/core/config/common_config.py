@@ -21,7 +21,7 @@ class DatabaseConfig(ConfigBase):
 
     @model_validator(mode='after')
     def validate(self) -> Self:
-        if self.host and self.port and self.user and self.password and self.name:
+        if [self.driver, self.host, self.port, self.user, self.password, self.name].count(None) == 0:
             self.url = SecretStr(
                 f'{self.driver}://{quote(self.user)}:{quote(self.password.get_secret_value())}'
                 f'@{self.host}:{self.port}/{self.name}'

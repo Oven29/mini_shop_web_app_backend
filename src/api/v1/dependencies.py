@@ -5,7 +5,7 @@ import jwt
 
 from core.config import settings
 from db.unitofwork import InterfaceUnitOfWork, UnitOfWork
-from exceptions.admin import InvalidTokenError, MaxTokenSizeError
+from exceptions.admin import InvalidTokenError
 from exceptions.common import UnauthorizedError
 from schemas.admin import AdminSchema
 from schemas.user import WebAppInitData, UserSchema
@@ -31,7 +31,7 @@ def admin_auth(token: Annotated[str, Depends(oauth2_bearer)]) -> AdminSchema:
         raise InvalidTokenError
 
     try:
-        payload = jwt.decode(token, settings.app.secret_key, algorithms=[settings.auth.algorithm])
+        payload = jwt.decode(token, settings.app.secret_key.get_secret_value(), algorithms=[settings.auth.algorithm])
     except jwt.exceptions.PyJWTError:
         raise InvalidTokenError
 

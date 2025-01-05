@@ -16,7 +16,7 @@ def validate_user_init_data(
     data_check_string = f'auth_date={init_data.auth_date}\nquery_id={init_data.query_id}\nuser={init_data.user_validate_string}'
     secret_key = hmac.new(
         key='WebAppData'.encode('utf-8'),
-        msg=settings.tg.bot_token.encode('utf-8'),
+        msg=settings.tg.bot_token.get_secret_value().encode('utf-8'),
         digestmod=hashlib.sha256,
     ).digest()
     hash = hmac.new(
@@ -42,7 +42,7 @@ def create_jwt_access_token(data: Dict[str, Any]) -> str:
     to_encode = data.copy()
     expire = datetime.now() + timedelta(minutes=settings.auth.access_token_expire_minutes)
     to_encode.update({'exp': expire})
-    return jwt.encode(to_encode, settings.app.secret_key, settings.auth.algorithm)
+    return jwt.encode(to_encode, settings.app.secret_key.get_secret_value(), settings.auth.algorithm)
 
 
 def create_admin_access_token(admin: AdminSchema) -> str:

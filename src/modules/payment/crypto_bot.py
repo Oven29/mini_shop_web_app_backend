@@ -18,7 +18,7 @@ class CryptoBotPayment(BasePayment):
     def __init__(self, config: CryptoBotConfig) -> None:
         super().__init__(config)
         self.crypto = AioCryptoPay(
-            token=self.config.token,
+            token=self.config.token.get_secret_value(),
             network=self.config.network,
         )
 

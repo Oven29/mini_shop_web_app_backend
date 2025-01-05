@@ -12,6 +12,7 @@ from utils.other import to_snake_case
 class BasePayment(ABC):
     """Base payment class"""
     origin: Optional[str] = None
+    config: PaymentConfigBase
 
     def __init__(self, config: PaymentConfigBase) -> None:
         self.logger = logging.getLogger(self.__class__.__name__)

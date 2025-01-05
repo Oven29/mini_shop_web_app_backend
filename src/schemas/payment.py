@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from enums.order import InvoiceStatus
 
@@ -16,5 +16,6 @@ class InvoiceSchema(BaseModel):
 
 
 class InvoiceCreateSchema(BaseModel):
-    amount: float
+    method: str
+    amount: float = Field(..., ge=100, le=1000000, description="Amount must be between 100 and 1,000,000")
     description: Optional[str] = None
