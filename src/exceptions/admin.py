@@ -11,3 +11,8 @@ class IncorrectUsernameOrPasswordError(BaseException):
 class LoginAlreadyExistsError(BaseException):
     status_code = status.HTTP_409_CONFLICT
     message = 'Login already exists'
+
+
+class InvalidTokenError(BaseException):
+    message = 'Invalid token'
+    status_code = status.HTTP_401_UNAUTHORIZED

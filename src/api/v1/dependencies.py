@@ -1,11 +1,12 @@
 from typing import Annotated
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
+import jwt
 
 from core.config import settings
 from db.unitofwork import InterfaceUnitOfWork, UnitOfWork
-from exceptions.common import InvalidTokenError, UnauthorizedError
+from exceptions.admin import InvalidTokenError, MaxTokenSizeError
+from exceptions.common import UnauthorizedError
 from schemas.admin import AdminSchema
 from schemas.user import WebAppInitData, UserSchema
 from utils.validate import validate_user_init_data
@@ -26,9 +27,12 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl='/v1/admin/login')
 
 
 def admin_auth(token: Annotated[str, Depends(oauth2_bearer)]) -> AdminSchema:
+    if len(token.encode('utf-8')) > settings.auth.max_token_size:
+        raise InvalidTokenError
+
     try:
         payload = jwt.decode(token, settings.app.secret_key, algorithms=[settings.auth.algorithm])
-    except JWTError:
+    except jwt.exceptions.PyJWTError:
         raise InvalidTokenError
 
     try:

@@ -49,6 +49,7 @@ class FileSettings(BaseModel):
 class AuthSettings(BaseModel):
     algorithm: str = 'HS256'
     access_token_expire_minutes: int = 60 * 24  # Default 1 day
+    max_token_size: int = 8 * 1024
 
 
 class LoggingSettings(BaseModel):
