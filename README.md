@@ -1,6 +1,7 @@
 # "Mini shop" tg web app fastapi backend
 
 This backend for "Mini shop" tg web app
+
 *Pay methods*:
 
 * [Yookassa](https://yookassa.ru/)
@@ -21,6 +22,7 @@ This backend for "Mini shop" tg web app
 ### Settings
 
 * `.env` - environment variables
+
 Example:
 ```env
 # TG
@@ -51,7 +53,9 @@ DB_URL=postgres+asyncpg://postgres:qwerty@localhost:5432/postgres
 ```
 
 * `config.toml` - configuration file
+
 All variables from this file is optional
+
 Example:
 ```.toml
 [dir]
@@ -103,7 +107,6 @@ docker-compose up -d --build
 - [ ] Create tests
 - [ ] Create bot routes and handlers 
 - [ ] Add notifications
-- [ ] Add nginx settings for dev
 
 ### Project hierarchy
 
