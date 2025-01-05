@@ -45,7 +45,7 @@ class UnitOfWork(InterfaceUnitOfWork):
 
     async def __aenter__(self):
         self.session = self.session_factory()
-    
+
         self.admin = AdminRepository(self.session)
         self.media = MediaRepository(self.session)
         self.order = OrderRepository(self.session)

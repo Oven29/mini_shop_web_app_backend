@@ -21,10 +21,11 @@ class DirSettings(BaseModel):
 class RedisSettings(BaseModel):
     host: str = 'localhost'
     port: int = 6379
+    db: int = 0
 
     @computed_field()
     def url(self) -> str:
-        return f'redis://{self.host}:{self.port}'
+        return f'redis://{self.host}:{self.port}/{self.db}'
 
 
 class FastapiSettings(BaseModel):

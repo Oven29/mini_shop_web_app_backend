@@ -12,7 +12,7 @@ class InvoiceSchema(BaseModel):
     status: InvoiceStatus
     method: str
     url: Optional[str] = None
-    created_at: Optional[datetime] = None
+    created_at: datetime
 
 
 class InvoiceCreateSchema(BaseModel):

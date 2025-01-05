@@ -1,9 +1,9 @@
 from typing import Optional
 from aiocryptopay import AioCryptoPay, const
 from fastapi import Request
-from pydantic import BaseModel
 
 from core.config import settings
+from core.config.payment_config import CryptoBotConfig
 from enums.order import InvoiceStatus
 from schemas.payment import InvoiceSchema, InvoiceCreateSchema
 from .base import BasePayment
@@ -15,7 +15,7 @@ class CryptoBotPayment(BasePayment):
 
     Docs - https://help.crypt.bot/crypto-pay-api
     """
-    def __init__(self, config: BaseModel) -> None:
+    def __init__(self, config: CryptoBotConfig) -> None:
         super().__init__(config)
         self.crypto = AioCryptoPay(
             token=self.config.token,
@@ -24,6 +24,7 @@ class CryptoBotPayment(BasePayment):
 
     async def create_invoice(self, data: InvoiceCreateSchema) -> InvoiceSchema:
         # https://help.crypt.bot/crypto-pay-api#createInvoice
+        self.logger.debug(f'Creating invoice with {data=}')
         invoice = await self.crypto.create_invoice(
             amount=data.amount,
             currency_type=const.CurrencyType.FIAT,
@@ -37,12 +38,15 @@ class CryptoBotPayment(BasePayment):
         return InvoiceSchema(
             pay_id=str(invoice.invoice_id),
             amount=invoice.amount,
+            status=InvoiceStatus.WAIT,
             method=self.name,
             url=invoice.mini_app_invoice_url,
+            created_at=invoice.created_at,
         )
 
     async def get_invoice(self, pay_id: str) -> Optional[InvoiceSchema]:
         # https://help.crypt.bot/crypto-pay-api#getInvoices
+        self.logger.debug(f'Getting invoice {pay_id=}')
         invoices = await self.crypto.get_invoices(invoice_ids=[pay_id])
         if not len(invoices):
             return None
@@ -53,10 +57,16 @@ class CryptoBotPayment(BasePayment):
             method=self.name,
             status=InvoiceStatus.PAID if invoices[0].status == const.InvoiceStatus.PAID else InvoiceStatus.WAIT,
             url=invoices[0].mini_app_invoice_url,
+            created_at=invoices[0].created_at,
         )
 
+    async def cancel_invoice(self, pay_id: str) -> None:
+        # https://help.crypt.bot/crypto-pay-api#deleteInvoice
+        await self.crypto.delete_invoice(invoice_id=int(pay_id))
+
     async def set_webhook(self) -> None:
-        self.logger.warning(f'Webhook for {self.name} setting manually, '
+        # https://help.crypt.bot/crypto-pay-api#webhooks
+        self.logger.warning(f'Webhook for {self.name} setting manually, ({self.webhook_url=}) '
             'more details - http://help.crypt.bot/crypto-pay-api#webhooks')
 
     async def handle_update(self, webhook: Request) -> Optional[InvoiceSchema]:

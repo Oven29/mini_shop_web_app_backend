@@ -1,28 +1,21 @@
 from abc import ABC, abstractmethod
 import logging
-from typing import Any, Optional
+from typing import Optional
 from fastapi import Request
-from pydantic import BaseModel
 
 from core.config import settings
+from core.config.payment_config import PaymentConfigBase
 from schemas.payment import InvoiceSchema, InvoiceCreateSchema
 from utils.other import to_snake_case
 
 
 class BasePayment(ABC):
     """Base payment class"""
-    name: str = None
     origin: Optional[str] = None
 
-    def __init__(self, config: BaseModel) -> None:
+    def __init__(self, config: PaymentConfigBase) -> None:
         self.logger = logging.getLogger(self.__class__.__name__)
         self.config = config
-
-    def __init_subclass__(cls, **kwargs: Any) -> None:
-        if getattr(cls, 'name', None) is None:
-            cls.name = to_snake_case(cls.__name__)
-
-        return super().__init_subclass__(**kwargs)
 
     @abstractmethod
     async def create_invoice(self, data: InvoiceCreateSchema) -> InvoiceSchema:
@@ -41,6 +34,15 @@ class BasePayment(ABC):
 
         :param pay_id: payment id
         :return: invoice or None
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def cancel_invoice(self, pay_id: str) -> None:
+        """
+        Cancel invoice by payment id
+
+        :param pay_id: payment id
         """
         raise NotImplementedError
 
@@ -70,3 +72,8 @@ class BasePayment(ABC):
     def return_url(self) -> str:
         """Return url"""
         return settings.tg.bot_url
+
+    @property
+    def name(self) -> str:
+        """Payment method name"""
+        return to_snake_case(self.__class__.__name__)

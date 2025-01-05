@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict, TomlConfigSettin
 
 from .base import ConfigError, base_dir
 from .common_config import DatabaseConfig, TelegramConfig, AppConfig
+from .payment_config import CryptoBotConfig, YookassaConfig
 from .settings import (
     DirSettings,
     RedisSettings,
@@ -23,6 +24,9 @@ class Settings(BaseSettings):
     db: DatabaseConfig = Field(default_factory=DatabaseConfig)
     tg: TelegramConfig = Field(default_factory=TelegramConfig)
     app: AppConfig = Field(default_factory=AppConfig)
+
+    yookassa: YookassaConfig = Field(default_factory=YookassaConfig)
+    cryptobot: CryptoBotConfig = Field(default_factory=CryptoBotConfig)
 
     dir: DirSettings = Field(default_factory=DirSettings)
     redis: RedisSettings = Field(default_factory=RedisSettings)

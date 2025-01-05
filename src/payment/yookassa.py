@@ -3,7 +3,6 @@ import uuid
 import aiohttp
 from fastapi import Request
 
-from core.config import settings
 from enums.order import InvoiceStatus
 from schemas.payment import InvoiceSchema, InvoiceCreateSchema
 from .base import BasePayment
@@ -16,6 +15,7 @@ class YookassaPayment(BasePayment):
     Docs - https://yookassa.ru/developers/api?codeLang=python
     """
     async def _request(self, type: str, method: str, data: Dict[str, Any] = {}) -> Any:
+        self.logger.debug(f'Requesting with {type=}, {method=}, {data=}')
         request_kwargs = {
             'url': f'{self.config.base_url}/{method}',
             'headers': {
@@ -39,13 +39,11 @@ class YookassaPayment(BasePayment):
 
     async def create_invoice(self, data: InvoiceCreateSchema) -> InvoiceSchema:
         # https://yookassa.ru/developers/api?codeLang=python#create_payment
+        self.logger.debug(f'Creating invoice with {data=}')
         request_data = {
             'amount': {
                 'value': str(data.amount),
                 'currency': 'RUB'
-            },
-            'payment_method_data': {
-                'type': 'bank_card'
             },
             'confirmation': {
                 'type': 'redirect',
@@ -72,6 +70,7 @@ class YookassaPayment(BasePayment):
 
     async def get_invoice(self, pay_id: str) -> InvoiceSchema:
         # https://yookassa.ru/developers/api?codeLang=python#get_payment
+        self.logger.debug(f'Getting invoice {pay_id=}')
         response = await self._request(
             type='get',
             method=f'payments/{pay_id}',
@@ -86,12 +85,21 @@ class YookassaPayment(BasePayment):
             created_at=response['created_at'],
         )
 
+    async def cancel_invoice(self, pay_id: str) -> None:
+        # https://yookassa.ru/developers/api?codeLang=bash#cancel_payment
+        await self._request(
+            type='post',
+            method=f'payments/{pay_id}/cancel',
+        )
+
     async def set_webhook(self) -> None:
         # https://yookassa.ru/developers/api?codeLang=bash#create_webhook
         if self.config.oauth_token is None:
             self.logger.warning('Webhook for Yookassa available only by OAuth token')
+            self.polling_mode = True
             return
 
+        self.logger.debug('Setting webhooks')
         await self._request(
             type='post',
             method='webhooks',
