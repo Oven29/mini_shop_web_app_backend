@@ -36,7 +36,8 @@ def admin_auth(token: Annotated[str, Depends(oauth2_bearer)]) -> AdminSchema:
         raise InvalidTokenError
 
     try:
-        return AdminSchema(**payload)
+        id, login = payload['sub'].split('_', 1)
+        return AdminSchema(id=int(id), login=login)
     except ValueError:
         raise InvalidTokenError
 
