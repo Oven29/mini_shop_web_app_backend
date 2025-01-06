@@ -125,10 +125,11 @@ make test
 ### TODO
 
 - [X] Create docker files
+- [X] Create tests
 - [ ] Create order routes
-- [-] Create tests
-- [ ] Create bot routes and handlers
+- [ ] Create bot routes and module
 - [ ] Add notifications
+- [ ] Finish writing the tests
 
 ### Project hierarchy
 
