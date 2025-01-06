@@ -6,7 +6,7 @@ from .base import BaseApiError
 class MediaNotFoundError(BaseApiError):
     class Model(BaseApiError.Model):
         status_code: int = status.HTTP_404_NOT_FOUND
-        msg: str = 'File with {media_id=} not found'
+        msg: str = 'File with media_id={media_id} not found'
         media_id: str = ''
 
     def __init__(self, media_id: str) -> None:

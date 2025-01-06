@@ -6,7 +6,7 @@ from .base import BaseApiError
 class CategoryNotFoundError(BaseApiError):
     class Model(BaseApiError.Model):
         status_code: int = status.HTTP_404_NOT_FOUND
-        msg: str = 'Category with {id=} not found'
+        msg: str = 'Category with id={id} not found'
         id: int = 0
 
     def __init__(self, id: int) -> None:

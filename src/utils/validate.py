@@ -46,7 +46,7 @@ def create_jwt_access_token(data: Dict[str, Any]) -> str:
 
 
 def create_admin_access_token(admin: AdminSchema) -> str:
-    return create_jwt_access_token(sub=f'{admin.id}_{admin.login}')
+    return create_jwt_access_token({'sub': f'{admin.id}_{admin.login}'})
 
 
 def decode_jwt_access_token(token: str) -> Dict[str, Any]:

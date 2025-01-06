@@ -6,7 +6,7 @@ from .base import BaseApiError
 class InvoiceNotFoundError(BaseApiError):
     class Model(BaseApiError.Model):
         status_code: int = status.HTTP_404_NOT_FOUND
-        msg: str = 'Invoice with {pay_id=} not found'
+        msg: str = 'Invoice with pay_id={pay_id} not found'
         pay_id: str = ''
 
     def __init__(self, pay_id: str) -> None:
@@ -16,7 +16,7 @@ class InvoiceNotFoundError(BaseApiError):
 class PaymentMethodNotFoundError(BaseApiError):
     class Model(BaseApiError.Model):
         status_code: int = status.HTTP_404_NOT_FOUND
-        msg: str = 'Payment method with {name=} not found or disabled'
+        msg: str = 'Payment method with name={name} not found or disabled'
         name: str = ''
 
     def __init__(self, name: str) -> None:

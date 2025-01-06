@@ -12,7 +12,7 @@ class ErrorResponse(BaseModel):
 
     @model_validator(mode='after')
     def validate(self) -> Self:
-        if '{' in self.detail:
-            self.detail = self.detail.format(**self.model_dump(exclude_unset=True))
+        if '{' in self.msg:
+            self.msg = self.msg.format(**self.model_dump(exclude_unset=True))
 
         return self

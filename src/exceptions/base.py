@@ -15,7 +15,7 @@ class BaseApiError(Exception):
 
     def __init__(self, **kwargs: Any) -> None:
         self.model = self.Model(**kwargs)
-        super().__init__(self.model.detail)
+        super().__init__(self.model.msg)
 
     def __init_subclass__(cls) -> None:
         cls.status_code = cls.Model.model_fields['status_code'].default
