@@ -1,9 +1,9 @@
 import hmac
 import hashlib
+from datetime import datetime, timedelta
 from typing import Any, Dict
 from passlib.context import CryptContext
 import jwt
-from datetime import datetime, timedelta
 
 from core.config import settings
 from schemas.admin import AdminSchema
@@ -47,3 +47,13 @@ def create_jwt_access_token(data: Dict[str, Any]) -> str:
 
 def create_admin_access_token(admin: AdminSchema) -> str:
     return create_jwt_access_token(sub=f'{admin.id}_{admin.login}')
+
+
+def decode_jwt_access_token(token: str) -> Dict[str, Any]:
+    return jwt.decode(token, settings.app.secret_key.get_secret_value(), [settings.auth.algorithm])    
+
+
+def decode_admin_access_token(token: str) -> AdminSchema:
+    payload = decode_jwt_access_token(token)
+    id, login = payload['sub'].split('_', 1)
+    return AdminSchema(id=int(id), login=login)

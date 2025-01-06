@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
-import jwt
+from jwt.exceptions import PyJWTError
 
 from core.config import settings
 from db.unitofwork import InterfaceUnitOfWork, UnitOfWork
@@ -9,7 +9,7 @@ from exceptions.admin import InvalidTokenError
 from exceptions.common import UnauthorizedError
 from schemas.admin import AdminSchema
 from schemas.user import WebAppInitData, UserSchema
-from utils.validate import validate_user_init_data
+from utils.validate import validate_user_init_data, decode_admin_access_token
 
 
 def user_auth(init_data: WebAppInitData) -> UserSchema:
@@ -31,14 +31,8 @@ def admin_auth(token: Annotated[str, Depends(oauth2_bearer)]) -> AdminSchema:
         raise InvalidTokenError
 
     try:
-        payload = jwt.decode(token, settings.app.secret_key.get_secret_value(), algorithms=[settings.auth.algorithm])
-    except jwt.exceptions.PyJWTError:
-        raise InvalidTokenError
-
-    try:
-        id, login = payload['sub'].split('_', 1)
-        return AdminSchema(id=int(id), login=login)
-    except ValueError:
+        return decode_admin_access_token(token)
+    except (PyJWTError, ValueError):
         raise InvalidTokenError
 
 
