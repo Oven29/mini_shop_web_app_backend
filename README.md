@@ -14,6 +14,7 @@ This backend for "Mini shop" tg web app
 * [SQLAlchemy](https://www.sqlalchemy.org/)
 * [Alembic](https://alembic.sqlalchemy.org/en/latest/)
 * [Aiogram](https://aiogram.dev/)
+* [Pytest](https://docs.pytest.org/en/latest/)
 * [Telegram Web App](https://core.telegram.org/bots/api)
 * [Postgres](https://www.postgresql.org/)
 * [Redis](https://redis.io/)
@@ -101,6 +102,19 @@ datefmt='%m.%d.%Y %H:%M:%S'
 
 ```bash
 docker-compose up -d --build
+```
+or
+```bash
+make docker
+```
+
+* Run tests
+```bash
+pytest
+```
+or
+```bash
+make test
 ```
 
 ### TODO

@@ -1,5 +1,9 @@
 from abc import ABC, abstractmethod
+import os
 from typing import Type
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+
+from core.config import settings
 
 from .base import async_session_maker
 from .repositories.admin import AdminRepository
@@ -63,3 +67,10 @@ class UnitOfWork(InterfaceUnitOfWork):
 
     async def rollback(self):
         await self.session.rollback()
+
+
+class TestUnitOfWork(UnitOfWork):
+    def __init__(self):
+        engine = create_async_engine('sqlite+aiosqlite:///' + os.path.join(settings.dir.base, 'test.sqlite'))
+        self.session_factory = async_sessionmaker(engine, expire_on_commit=False)
+        
