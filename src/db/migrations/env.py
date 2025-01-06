@@ -9,13 +9,7 @@ from alembic import context
 
 from core.config import settings
 
-from db.models.user import User
-from db.models.product import Product, Category, ProductImage
-from db.models.media import Media
-from db.models.order import Order, OrderItem, Invoice
-from db.models.admin import Admin
-
-from db.base import Base
+from db.models import Base
 
 
 config = context.config

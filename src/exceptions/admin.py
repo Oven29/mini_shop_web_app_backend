@@ -1,18 +1,21 @@
 from fastapi import status
 
-from .base import BaseException
+from .base import BaseApiError
 
 
-class IncorrectUsernameOrPasswordError(BaseException):
-    status_code = status.HTTP_401_UNAUTHORIZED
-    message = 'Incorrect username or password'
+class IncorrectUsernameOrPasswordError(BaseApiError):
+    class Model(BaseApiError.Model):
+        status_code: int = status.HTTP_401_UNAUTHORIZED
+        msg: str = 'Incorrect username or password'
 
 
-class LoginAlreadyExistsError(BaseException):
-    status_code = status.HTTP_409_CONFLICT
-    message = 'Login already exists'
+class LoginAlreadyExistsError(BaseApiError):
+    class Model(BaseApiError.Model):
+        status_code: int = status.HTTP_409_CONFLICT
+        msg: str = 'Login already exists'
 
 
-class InvalidTokenError(BaseException):
-    message = 'Invalid token'
-    status_code = status.HTTP_401_UNAUTHORIZED
+class InvalidTokenError(BaseApiError):
+    class Model(BaseApiError.Model):
+        status_code: int = status.HTTP_401_UNAUTHORIZED
+        msg: str = 'Invalid token'

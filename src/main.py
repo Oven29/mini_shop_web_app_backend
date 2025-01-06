@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from api.v1 import v1_router
 from core.config import settings
-from exceptions.base import BaseException, exception_handler
+from exceptions.base import BaseApiError, exception_handler
 
 
 app = FastAPI(
@@ -12,7 +12,7 @@ app = FastAPI(
     debug=settings.app.debug,
 )
 
-app.add_exception_handler(BaseException, exception_handler)
+app.add_exception_handler(BaseApiError, exception_handler)
 app.include_router(v1_router)
 
 
