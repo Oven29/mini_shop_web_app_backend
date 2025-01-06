@@ -103,16 +103,21 @@ datefmt='%m.%d.%Y %H:%M:%S'
 ```bash
 docker-compose up -d --build
 ```
+
 or
+
 ```bash
 make docker
 ```
 
 * Run tests
+
 ```bash
 pytest
 ```
+
 or
+
 ```bash
 make test
 ```
@@ -121,7 +126,7 @@ make test
 
 - [X] Create docker files
 - [ ] Create order routes
-- [ ] Create tests
+- [-] Create tests
 - [ ] Create bot routes and handlers
 - [ ] Add notifications
 
