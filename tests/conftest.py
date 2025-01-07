@@ -1,22 +1,24 @@
 import json
 import os
 from fastapi.testclient import TestClient
+from pydantic import BaseModel
 import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from api.v1.dependencies import admin_auth, user_auth
+from core.config import settings
 from db.models import Base
 from db.models.admin import Admin
 from db.unitofwork import UnitOfWork, TestUnitOfWork
+from exceptions.base import BaseApiError
 from main import app
 from schemas.admin import AdminSchema
 from schemas.user import UserSchema
 from utils.validate import hash_password
 
 
-engine = create_engine(f'sqlite:///./test.sqlite', connect_args={'check_same_thread': False})
+engine = create_engine(f'sqlite:///{settings.dir.test_sqlite_path}', connect_args={'check_same_thread': False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
@@ -58,3 +60,8 @@ def load_admin(db_session):
     db_session.add(admin)
     db_session.commit()
     yield admin
+
+
+def assert_error(response, error):
+    assert response.status_code == error.status_code
+    assert response.json() == error.model.model_dump()

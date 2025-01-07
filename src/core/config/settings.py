@@ -1,14 +1,15 @@
 import logging
 import os
 from typing import List, Optional, Self
-from pydantic import BaseModel, computed_field, model_validator
+from pydantic import BaseModel, Field, computed_field, model_validator
 
 from .base import base_dir
 
 
 class DirSettings(BaseModel):
     base: str = base_dir
-    uploads: str = os.path.join(base_dir, 'uploads')
+    uploads: str = Field(default_factory=lambda: os.path.join(base_dir, 'uploads'))
+    test_sqlite_path: str = Field(default_factory=lambda: os.path.join(base_dir, 'test.sqlite'))
 
     @model_validator(mode='after')
     def validate(self) -> Self:

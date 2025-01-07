@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import os
 from typing import Type
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
@@ -71,6 +70,5 @@ class UnitOfWork(InterfaceUnitOfWork):
 
 class TestUnitOfWork(UnitOfWork):
     def __init__(self):
-        engine = create_async_engine('sqlite+aiosqlite:///' + os.path.join(settings.dir.base, 'test.sqlite'))
+        engine = create_async_engine('sqlite+aiosqlite:///' + settings.dir.test_sqlite_path)
         self.session_factory = async_sessionmaker(engine, expire_on_commit=False)
-        
