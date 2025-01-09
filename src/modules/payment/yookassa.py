@@ -23,17 +23,18 @@ class YookassaPayment(BasePayment):
                 'Content-Type': 'application/json',
             },
         }
+        session_kwargs = {}
         if len(data):
             request_kwargs['json'] = data
         if self.config.oauth_token is not None:
             request_kwargs['headers']['Authorization'] = f'Bearer {self.config.oauth_token.get_secret_value()}'
         else:
-            request_kwargs['auth']= aiohttp.BasicAuth(
-                login=self.config.shop_id,
+            session_kwargs['auth']= aiohttp.BasicAuth(
+                login=str(self.config.shop_id),
                 password=self.config.secret_key.get_secret_value(),
             )
 
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(**session_kwargs) as session:
             async with getattr(session, type)(**request_kwargs) as response:
                 return await response.json()
 

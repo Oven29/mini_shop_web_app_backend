@@ -40,7 +40,7 @@ class Order(Base):
     amount: Mapped[int] = mapped_column(Integer)
     discount: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(), onupdate=datetime.now())
 
     items: Mapped[List[OrderItem]] = relationship(back_populates='order', cascade='all, delete-orphan')
 

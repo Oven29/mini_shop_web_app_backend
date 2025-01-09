@@ -17,10 +17,11 @@ class CryptoBotPayment(BasePayment):
     """
     def __init__(self, config: CryptoBotConfig) -> None:
         super().__init__(config)
-        self.crypto = AioCryptoPay(
-            token=self.config.token.get_secret_value(),
-            network=self.config.network,
-        )
+        if self.config.enabled:
+            self.crypto = AioCryptoPay(
+                token=self.config.token.get_secret_value(),
+                network=self.config.network,
+            )
 
     async def create_invoice(self, data: InvoiceCreateSchema) -> InvoiceSchema:
         # https://help.crypt.bot/crypto-pay-api#createInvoice

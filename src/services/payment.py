@@ -3,7 +3,7 @@ from typing import List, Optional
 from fastapi import Request
 
 from enums.order import InvoiceStatus
-from exceptions.common import BadRequestError
+from exceptions.common import BadRequestError, UnauthorizedError
 from exceptions.payment import InvoiceForiddenError, InvoiceNotFoundError, PaymentMethodNotFoundError
 from modules import payment
 from schemas.payment import InvoiceCreateSchema, InvoiceSchema
@@ -13,7 +13,7 @@ from .base import AbstractService
 
 class PaymentService(AbstractService):
     async def get_methods(self) -> List[str]:
-        return [m.name for m in payment.methods]
+        return [m.name for m in payment.methods if m.config.enabled]
 
     def _get_method(self, name: str) -> payment.BasePayment:
         method = payment.name_to_method.get(name)
@@ -24,13 +24,16 @@ class PaymentService(AbstractService):
     async def create_invoice(self, data: InvoiceCreateSchema, user: UserSchema) -> InvoiceSchema:
         invoice = await self._get_method(data.method).create_invoice(data)
         async with self.uow:
+            db_user = await self.uow.user.get(user_id=user.user_id)
+            if db_user is None:
+                raise UnauthorizedError
             await self.uow.invoice.create(
                 pay_id=invoice.pay_id,
                 amount=invoice.amount,
                 status=invoice.status,
                 method=invoice.method,
                 created_at=invoice.created_at,
-                user_id=user.user_id,
+                user_id=db_user.id,
             )
             await self.uow.commit()
             return invoice
@@ -41,7 +44,7 @@ class PaymentService(AbstractService):
             if invoice is None:
                 raise InvoiceNotFoundError(pay_id)
 
-            if user is not None and invoice.user_id != user.user_id:
+            if user is not None and invoice.user_id != user.id:
                 raise InvoiceForiddenError(pay_id)
 
             return await invoice.to_schema()
