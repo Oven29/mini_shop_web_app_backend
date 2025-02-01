@@ -17,7 +17,40 @@ class Category(Base):
 
     name: Mapped[str] = mapped_column(String(256), nullable=False)
     translit: Mapped[str] = mapped_column(String(256), nullable=False)
+
+    parent_category_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('categories.id', ondelete='CASCADE'), nullable=True)
+
     products: Mapped[List[Product]] = relationship(back_populates='category', cascade='all, delete-orphan')
+
+    parent_category: Mapped[Optional[Category]] = relationship(back_populates='subcategories', remote_side='Category.id')
+    subcategories: Mapped[List[Category]] = relationship(back_populates='parent_category', cascade='all, delete-orphan')
+
+    async def to_schema(
+        self,
+        include_subcategories: bool = False,
+        include_parent_category: bool = False,
+    ) -> CategorySchema:
+        if include_subcategories:
+            subcategories = await self.awaitable_attrs.subcategories
+            subcategories = [await subcategory.to_schema() for subcategory in subcategories]
+        else:
+            subcategories = []
+    
+        parent_category = None
+        if include_parent_category:
+            parent_category = await self.awaitable_attrs.parent_category
+            if not parent_category is None:
+                parent_category = await parent_category.to_schema()
+
+        return CategorySchema(
+            id=self.id,
+            name=self.name,
+            translit=self.translit,
+            products=await self.awaitable_attrs.products,
+            parent_category_id=self.parent_category_id,
+            subcategories=subcategories,
+            parent=parent_category,
+        )
 
 
 class Product(Base):

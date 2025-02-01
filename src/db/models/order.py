@@ -33,11 +33,11 @@ class Order(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     user: Mapped[User] = relationship()
 
-    invoice_id: Mapped[int] = mapped_column(ForeignKey('invoices.id'), nullable=False)
-    invoice: Mapped[Invoice] = relationship(back_populates='order')
+    invoice_id: Mapped[Optional[int]] = mapped_column(ForeignKey('invoices.id'), nullable=True)
+    invoice: Mapped[Optional[Invoice]] = relationship(back_populates='order')
 
     status: Mapped[OrderStatus] = mapped_column(Enum(OrderStatus, native_enum=False))
-    amount: Mapped[int] = mapped_column(Integer)
+    amount: Mapped[int] = mapped_column(Integer)  # total amount with all discounts
     discount: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(), onupdate=datetime.now())

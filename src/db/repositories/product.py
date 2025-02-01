@@ -44,6 +44,11 @@ class CommonRepository(SQLAlchemyRepository[T]):
 class CategoryRepository(CommonRepository[Category]):
     model = Category
 
+    async def get(self, **kwargs: Any) -> Optional[Category]:
+        return (await self.session.scalars(
+            select(Category).filter_by(**kwargs)
+        )).unique().one_or_none()
+
 
 class ProductRepository(CommonRepository[Product]):
     model = Product

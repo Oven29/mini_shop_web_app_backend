@@ -20,7 +20,7 @@ class SQLAlchemyRepository(AbstractRepository[T]):
         self.logger.debug(f'Creating with {data=}')
         stmt = insert(self.model).values(**data).returning(self.model)
         res = await self.session.execute(stmt)
-        return res.scalar_one()
+        return res.unique().scalar_one()
 
     async def get(self, **filter_by: Any) -> Optional[T]:
         self.logger.debug(f'Getting with {filter_by=}')

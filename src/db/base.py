@@ -31,7 +31,7 @@ class Base(DeclarativeBase, AsyncAttrs):
         async def validate_field(obj: Any) -> Any:
             if isinstance(obj, Base):
                 return await obj.to_schema()
-            if isinstance(obj, List):
+            if isinstance(obj, list):
                 return [await validate_field(e) for e in obj]
             return obj
 
