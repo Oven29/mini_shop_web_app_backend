@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import Depends
+from fastapi import Depends, Header
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import PyJWTError
 
@@ -8,18 +8,18 @@ from db.unitofwork import InterfaceUnitOfWork, UnitOfWork
 from exceptions.admin import InvalidTokenError
 from exceptions.common import UnauthorizedError
 from schemas.admin import AdminSchema
-from schemas.user import WebAppInitData, UserSchema
+from schemas.user import UserAuthHeader, UserSchema
 from utils.validate import validate_user_init_data, decode_admin_access_token
 
 
-def user_auth(init_data: WebAppInitData) -> UserSchema:
-    if not validate_user_init_data(init_data):
+def user_auth(user_auth: UserAuthHeader = Header()) -> UserSchema:
+    if not validate_user_init_data(user_auth.init_data):
         raise UnauthorizedError
 
     return UserSchema(
-        user_id=init_data.user.id,
-        username=init_data.user.username,
-        first_name=init_data.user.first_name,
+        user_id=user_auth.init_data.user.id,
+        username=user_auth.init_data.user.username,
+        first_name=user_auth.init_data.user.first_name,
     )
 
 
@@ -38,4 +38,4 @@ def admin_auth(token: Annotated[str, Depends(oauth2_bearer)]) -> AdminSchema:
 
 UOWDep = Annotated[InterfaceUnitOfWork, Depends(UnitOfWork)]
 AdminAuthDep = Annotated[AdminSchema, Depends(admin_auth)]
-UserAuthDep = Annotated[WebAppInitData, Depends(user_auth)]
+UserAuthDep = Annotated[UserSchema, Depends(user_auth)]

@@ -25,6 +25,10 @@ class WebAppInitData(BaseModel):
     hash: str
 
 
+class UserAuthHeader(BaseModel):
+    init_data: WebAppInitData
+
+
 class UserSchema(BaseModel):
     user_id: int
     username: Optional[str] = None
