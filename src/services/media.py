@@ -29,8 +29,8 @@ class MediaService(AbstractService):
         if weight > settings.file.max_size:
             raise FileTooLargeError
 
-        extension = file.filename.split('.')[-1]
-        if extension not in settings.AVAILABLE_EXTENSIONS:
+        extension = file.filename.split('.')[-1].lower()
+        if extension not in settings.file.allowed_extensions:
             raise NotAvaliableExtensionError
 
         media_id = get_rand_string(64)

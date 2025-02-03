@@ -53,20 +53,20 @@ class CategoryRepository(CommonRepository[Category]):
 class ProductRepository(CommonRepository[Product]):
     model = Product
 
-    def get_product_image_repository(self) -> SQLAlchemyRepository:
+    def _get_product_image_repository(self) -> SQLAlchemyRepository:
         return SQLAlchemyRepository[ProductImage](self.session, ProductImage)
 
     async def create(self, **data: Any) -> Product:
         media = data.pop('media') if 'media' in data else []
         created = await super().create(**data)
-        product_image = self.get_product_image_repository()
+        product_image = self._get_product_image_repository()
         for item in media:
-            await product_image.create(product_id=created.id, media_id=item.id)
+            await product_image.create(product_id=created.id, media_id=item)
         return created
 
     async def update(self, id: int, **values: Any) -> Product:
         if 'media' in values:
-            product_image = self.get_product_image_repository()
+            product_image = self._get_product_image_repository()
             items = await product_image.select(product_id=id)
             for el in items:
                 await product_image.delete(el.id)
@@ -77,3 +77,11 @@ class ProductRepository(CommonRepository[Product]):
                 return await self.get(id=id)
 
         return await super().update(id, **values)
+
+    async def delete(self, id: int) -> Product:
+        product_image = self._get_product_image_repository()
+        items = await product_image.select(product_id=id)
+        for el in items:
+            await product_image.delete(el.id)
+
+        return await super().delete(id)

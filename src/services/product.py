@@ -12,14 +12,14 @@ class ProductService(AbstractService):
             res = await self.uow.product.select()
             return [await e.to_schema() for e in res]
 
-    async def check_exists(self, product_id: int) -> None:
+    async def _check_exists(self, product_id: int) -> None:
         product = await self.uow.product.get(id=product_id)
         if product is None:
             raise ProductNotFoundError(product_id)
 
     async def get_by_id(self, product_id: int) -> Optional[ProductSchema]:
         async with self.uow:
-            await self.check_exists(product_id)
+            await self._check_exists(product_id)
             res = await self.uow.product.get(id=product_id)
             return await res.to_schema()
 
@@ -31,7 +31,7 @@ class ProductService(AbstractService):
 
     async def update(self, product_id: int, product: ProductUpdateSchema) -> ProductSchema:
         async with self.uow:
-            await self.check_exists(product_id)
+            await self._check_exists(product_id)
             if product.media:
                 for item in product.media:
                     if await self.uow.media.get(id=item) is None:
@@ -43,7 +43,7 @@ class ProductService(AbstractService):
 
     async def delete(self, product_id: int) -> ProductSchema:
         async with self.uow:
-            await self.check_exists(product_id)
+            await self._check_exists(product_id)
             res = await self.uow.product.delete(id=product_id)
             await self.uow.commit()
             return await res.to_schema()

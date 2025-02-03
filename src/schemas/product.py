@@ -27,7 +27,7 @@ class ProductCreateSchema(BaseModel):
     discount: Optional[int] = None
     discount_expire: Optional[datetime] = None
     amount: Optional[int] = None
-    media: List[MediaSchema] = []
+    media: List[int] = []
 
 
 class ProductUpdateSchema(BaseModel):

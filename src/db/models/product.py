@@ -42,11 +42,13 @@ class Category(Base):
             if not parent_category is None:
                 parent_category = await parent_category.to_schema()
 
+        products = await self.awaitable_attrs.products
+
         return CategorySchema(
             id=self.id,
             name=self.name,
             translit=self.translit,
-            products=await self.awaitable_attrs.products,
+            products=[await e.to_schema() for e in products],
             parent_category_id=self.parent_category_id,
             subcategories=subcategories,
             parent=parent_category,
@@ -68,6 +70,22 @@ class Product(Base):
     category: Mapped[Category] = relationship(back_populates='products')
 
     media: Mapped[List[ProductImage]] = relationship(back_populates='product', cascade='all, delete-orphan')
+
+    async def to_schema(self) -> ProductSchema:
+        media = await self.awaitable_attrs.media
+
+        return ProductSchema(
+            id=self.id,
+            name=self.name,
+            translit=self.translit,
+            description=self.description,
+            price=self.price,
+            discount=self.discount,
+            discount_expire=self.discount_expire,
+            amount=self.amount,
+            category_id=self.category_id,
+            media=[await e.to_schema() for e in media],
+        )
 
 
 class ProductImage(Base):

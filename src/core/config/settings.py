@@ -33,7 +33,7 @@ class FastapiSettings(BaseModel):
     host: str = '0.0.0.0'
     port: int = 8000
     reload: bool = False
-    origins: List[str] = ['*']
+    origins: List[str] = ['http://localhost:3000/']
 
 
 class ProjectSettings(BaseModel):
@@ -43,7 +43,7 @@ class ProjectSettings(BaseModel):
 
 
 class FileSettings(BaseModel):
-    max_size: int = 16 * 1024 * 1024  # Default 16 MB
+    max_size: int = 64 * 1024 * 1024  # Default 16 MB
     allowed_extensions: List[str] = ['jpg', 'jpeg', 'png', 'mp4']
 
 

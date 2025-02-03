@@ -44,6 +44,20 @@ class Order(Base):
 
     items: Mapped[List[OrderItem]] = relationship(back_populates='order', cascade='all, delete-orphan')
 
+    async def to_schema(self) -> OrderSchema:
+        user = await self.awaitable_attrs.user
+        items = await self.awaitable_attrs.items
+
+        return OrderSchema(
+            id=self.id,
+            amount=self.amount,
+            discount=self.discount,
+            status=self.status,
+            user=await user.to_schema(),
+            items=[await e.product.to_schema() for e in items],
+            created_at=self.created_at,
+        )
+
 
 class OrderItem(Base):
     order_id: Mapped[int] = mapped_column(ForeignKey('orders.id'), nullable=False)

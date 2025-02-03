@@ -1,6 +1,7 @@
 import logging
 from typing import Any, List, Optional
 from pydantic import BaseModel
+import sqlalchemy
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
 
@@ -28,16 +29,9 @@ class Base(DeclarativeBase, AsyncAttrs):
         if self.__schema__ is None:
             return
 
-        async def validate_field(obj: Any) -> Any:
-            if isinstance(obj, Base):
-                return await obj.to_schema()
-            if isinstance(obj, list):
-                return [await validate_field(e) for e in obj]
-            return obj
-
         fields = kwargs.copy()
         fields.update({
-            field: await validate_field(getattr(self, field))
+            field: getattr(self, field)
               for field in self.__schema__.model_fields.keys()
               if hasattr(self, field)
         })
