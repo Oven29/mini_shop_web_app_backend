@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter
 
-from exceptions.admin import InvalidTokenError
+from exceptions.common import InvalidTokenError
 from exceptions.category import CategoryNotFoundError
 from schemas.category import CategorySchema, CategoryCreateSchema, CategoryUpdateSchema
 from schemas.product import ProductSchema

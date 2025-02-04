@@ -39,6 +39,12 @@ class Base(DeclarativeBase, AsyncAttrs):
         logger.debug(f'Autogenerating schema {self.__class__.__name__} {fields=}')
         return self.__schema__(**fields)
 
+    def __bool__(self) -> bool:
+        return True
+
+    def __repr__(self) -> str:
+        return f'<{self.__class__.__name__} id={self.id}>'
+
 
 async def get_async_session():
     async with async_session_maker() as session:

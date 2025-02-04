@@ -1,15 +1,22 @@
 from typing import List
 
-from schemas.user import UserSchema
+from exceptions.user import WrongAuthData
+from schemas.user import UserAuthSchema, UserSchema
 from schemas.order import OrderSchema
+from utils.validate import validate_init_data
 from .base import AbstractService
 
 
 class UserService(AbstractService):
-    async def auth(self, user: UserSchema) -> UserSchema:
+    async def auth(self, auth_data: UserAuthSchema) -> UserSchema:
+        if not validate_init_data(auth_data.init_data):
+            raise WrongAuthData
+
         async with self.uow:
+            user = auth_data.init_data_unsafe.user
+
             db_user, created = await self.uow.user.get_or_crete(
-                user_id=user.user_id,
+                user_id=user.id,
                 defaults={
                     'username': user.username,
                     'first_name': user.first_name,
@@ -27,8 +34,7 @@ class UserService(AbstractService):
             if created:
                 await self.uow.commit()
 
-            user.register_date = db_user.register_date
-            return user
+            return await db_user.to_schema()
 
     async def get_all(self) -> List[UserSchema]:
         async with self.uow:

@@ -1,33 +1,49 @@
-from typing import Annotated
-from fastapi import Depends, Header
+from typing import Annotated, Optional
+from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.security.utils import get_authorization_scheme_param
 from jwt.exceptions import PyJWTError
 
 from core.config import settings
 from db.unitofwork import InterfaceUnitOfWork, UnitOfWork
-from exceptions.admin import InvalidTokenError
-from exceptions.common import UnauthorizedError
+from exceptions.common import InvalidTokenError
+from exceptions.user import WrongAuthData
 from schemas.admin import AdminSchema
-from schemas.user import UserAuthHeader, UserSchema
-from utils.validate import validate_user_init_data, decode_admin_access_token
+from schemas.user import UserSchema
+from utils.validate import decode_admin_access_token, decode_user_access_token
 
 
-def user_auth(user_auth: UserAuthHeader = Header()) -> UserSchema:
-    if not validate_user_init_data(user_auth.init_data):
-        raise UnauthorizedError
-
-    return UserSchema(
-        user_id=user_auth.init_data.user.id,
-        username=user_auth.init_data.user.username,
-        first_name=user_auth.init_data.user.first_name,
-    )
+def check_length_token(token: str) -> bool:
+    return len(token.encode('utf-8')) <= settings.auth.max_token_size
 
 
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl='/v1/admin/login')
+async def user_token_depend(request: Request) -> str:
+    authorization = request.headers.get("Authorization")
+    scheme, param = get_authorization_scheme_param(authorization)
+    if not authorization or scheme.lower() != "bearer":
+        raise InvalidTokenError
+
+    return param
 
 
-def admin_auth(token: Annotated[str, Depends(oauth2_bearer)]) -> AdminSchema:
-    if len(token.encode('utf-8')) > settings.auth.max_token_size:
+def user_auth(token: Annotated[str, Depends(user_token_depend)]) -> UserSchema:
+    if not check_length_token(token):
+        raise InvalidTokenError
+
+    try:
+        return decode_user_access_token(token)
+    except (PyJWTError, ValueError):
+        raise InvalidTokenError
+
+
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl='/v1/admin/login', auto_error=False)
+
+
+def admin_auth(token: Annotated[Optional[str], Depends(oauth2_bearer)]) -> AdminSchema:
+    if token is None:
+        raise InvalidTokenError
+
+    if not check_length_token(token):
         raise InvalidTokenError
 
     try:

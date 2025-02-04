@@ -52,6 +52,7 @@ class TelegramConfig(ConfigBase):
 
     bot_token: SecretStr
     bot_username: Optional[str] = None
+    public_key: str
 
     @computed_field()
     def bot_url(self) -> str:

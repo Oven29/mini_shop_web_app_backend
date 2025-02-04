@@ -30,6 +30,7 @@ Example:
 # TG
 TG_BOT_TOKEN=123:ABCDEFGHIJKLMNOPQRSTUVWXYZ  # Get from https://t.me/BotFather
 TG_BOT_USERNAME=test_bot  # Optional (autosetting)
+TG_PUBLIC_KEY=e7bf03a2fa4602af4580703d88dda5bb59f32ed8b02a56c187fe7d34caed242d  # See more https://core.telegram.org/bots/webapps#validating-data-for-third-party-use
 
 # General
 SECRET_KEY=12345678qwerty

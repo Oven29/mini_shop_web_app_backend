@@ -33,7 +33,7 @@ class SQLAlchemyRepository(AbstractRepository[T]):
         stmt = select(self.model).filter_by(**filter_by)
         res = await self.session.execute(stmt)
         res = res.scalar_one_or_none()
-        if res:
+        if res is not None:
             self.logger.debug(f'Getting with {filter_by=}')
             return res, False
 

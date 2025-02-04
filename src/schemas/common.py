@@ -16,3 +16,8 @@ class ErrorResponse(BaseModel):
             self.msg = self.msg.format(**self.model_dump(exclude_unset=True))
 
         return self
+
+
+class TokenSchema(BaseModel):
+    access_token: str
+    token_type: str

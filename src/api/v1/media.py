@@ -1,8 +1,8 @@
 from fastapi import APIRouter, UploadFile
 from fastapi.responses import FileResponse
 
-from exceptions.admin import InvalidTokenError
-from exceptions.common import UnauthorizedError
+from exceptions.common import InvalidTokenError
+from exceptions.user import WrongAuthData
 from exceptions.media import FileTooLargeError, MediaNotFoundError, NotAvaliableExtensionError
 from schemas.media import MediaSchema
 from services.media import MediaService
@@ -50,7 +50,7 @@ async def delete(
     '/get_file_url/{media_id}',
     responses={
         MediaNotFoundError.status_code: MediaNotFoundError.error_schema,
-        UnauthorizedError.status_code: UnauthorizedError.error_schema,
+        InvalidTokenError.status_code: InvalidTokenError.error_schema,
     },
 )
 async def get_file_url(

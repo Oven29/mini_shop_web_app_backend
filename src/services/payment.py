@@ -3,7 +3,8 @@ from typing import List, Optional
 from fastapi import Request
 
 from enums.order import InvoiceStatus
-from exceptions.common import BadRequestError, UnauthorizedError
+from exceptions.user import WrongAuthData
+from exceptions.common import BadRequestError
 from exceptions.payment import InvoiceForiddenError, InvoiceNotFoundError, PaymentMethodNotFoundError
 from modules import payment
 from schemas.payment import InvoiceCreateSchema, InvoiceSchema
@@ -26,7 +27,7 @@ class PaymentService(AbstractService):
         async with self.uow:
             db_user = await self.uow.user.get(user_id=user.user_id)
             if db_user is None:
-                raise UnauthorizedError
+                raise WrongAuthData
             await self.uow.invoice.create(
                 pay_id=invoice.pay_id,
                 amount=invoice.amount,

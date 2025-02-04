@@ -1,8 +1,9 @@
 from typing import List
 from fastapi import APIRouter, Request
 
-from exceptions.admin import InvalidTokenError
-from exceptions.common import BadRequestError, UnauthorizedError
+from exceptions.user import WrongAuthData
+from exceptions.common import InvalidTokenError
+from exceptions.common import BadRequestError
 from exceptions.payment import InvoiceForiddenError, InvoiceNotFoundError, PaymentMethodNotFoundError
 from schemas.common import HttpOk
 from schemas.payment import InvoiceSchema, InvoiceCreateSchema
@@ -26,7 +27,7 @@ async def get_methods(
 @router.put(
     '/create_invoice',
     responses={
-        UnauthorizedError.status_code: UnauthorizedError.error_schema,
+        InvalidTokenError.status_code: InvalidTokenError.error_schema,
         PaymentMethodNotFoundError.status_code: PaymentMethodNotFoundError.error_schema,
     },
 )
@@ -41,7 +42,7 @@ async def create_invoice(
 @router.post(
     '/get/{invoice_id}',
     responses={
-        UnauthorizedError.status_code: UnauthorizedError.error_schema,
+        InvalidTokenError.status_code: InvalidTokenError.error_schema,
         InvoiceNotFoundError.status_code: InvoiceNotFoundError.error_schema,
         InvoiceForiddenError.status_code: InvoiceForiddenError.error_schema,
     },

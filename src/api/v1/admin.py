@@ -2,8 +2,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from exceptions.admin import LoginAlreadyExistsError, IncorrectUsernameOrPasswordError, InvalidTokenError
-from schemas.admin import AdminSchema, AdminCreateSchema, Token
+from exceptions.admin import LoginAlreadyExistsError, IncorrectUsernameOrPasswordError
+from exceptions.common import InvalidTokenError
+from schemas.admin import AdminSchema, AdminCreateSchema
+from schemas.common import TokenSchema
 from services.admin import AdminService
 from utils.validate import create_admin_access_token
 from .dependencies import UOWDep, AdminAuthDep
@@ -24,10 +26,10 @@ router = APIRouter(
 async def login(
     uow: UOWDep,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-) -> Token:
+) -> TokenSchema:
     admin = await AdminService(uow).login(form_data.username, form_data.password)
     token = create_admin_access_token(admin)
-    return Token(access_token=token, token_type='bearer')
+    return TokenSchema(access_token=token, token_type='bearer')
 
 
 @router.put(

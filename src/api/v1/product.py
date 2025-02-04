@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter
 
-from exceptions.admin import InvalidTokenError
+from exceptions.common import InvalidTokenError
 from exceptions.product import ProductNotFoundError
 from schemas.product import ProductSchema, ProductCreateSchema, ProductUpdateSchema
 from services.product import ProductService

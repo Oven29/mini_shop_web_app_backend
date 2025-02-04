@@ -13,9 +13,3 @@ class LoginAlreadyExistsError(BaseApiError):
     class Model(BaseApiError.Model):
         status_code: int = status.HTTP_409_CONFLICT
         msg: str = 'Login already exists'
-
-
-class InvalidTokenError(BaseApiError):
-    class Model(BaseApiError.Model):
-        status_code: int = status.HTTP_401_UNAUTHORIZED
-        msg: str = 'Invalid token'

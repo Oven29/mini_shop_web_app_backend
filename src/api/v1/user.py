@@ -1,11 +1,13 @@
 from typing import List
 from fastapi import APIRouter
 
-from exceptions.admin import InvalidTokenError
-from exceptions.common import UnauthorizedError
-from schemas.user import UserSchema
+from exceptions.common import InvalidTokenError
+from exceptions.user import WrongAuthData
+from schemas.common import TokenSchema
+from schemas.user import UserAuthSchema, UserSchema
 from services.user import UserService
 from schemas.order import OrderSchema
+from utils.validate import create_user_access_token
 from .dependencies import AdminAuthDep, UserAuthDep, UOWDep
 
 
@@ -18,14 +20,16 @@ router = APIRouter(
 @router.post(
     '/auth',
     responses={
-        UnauthorizedError.status_code: UnauthorizedError.error_schema,
+        WrongAuthData.status_code: WrongAuthData.error_schema,
     },
 )
 async def auth(
     uow: UOWDep,
-    user: UserAuthDep,
-) -> UserSchema:
-    return await UserService(uow).auth(user)
+    user_auth: UserAuthSchema,
+) -> TokenSchema:
+    user = await UserService(uow).auth(user_auth)
+    token = create_user_access_token(user)
+    return TokenSchema(access_token=token, token_type='bearer')
 
 
 @router.post(
@@ -44,7 +48,7 @@ async def get_all(
 @router.post(
     '/get_orders',
     responses={
-        UnauthorizedError.status_code: UnauthorizedError.error_schema,
+        InvalidTokenError.status_code: InvalidTokenError.error_schema,
     }
 )
 async def get_orders(

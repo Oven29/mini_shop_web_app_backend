@@ -1,7 +1,8 @@
 from fastapi import status
 
 from api.v1 import v1_router, admin_router
-from exceptions.admin import InvalidTokenError, LoginAlreadyExistsError, IncorrectUsernameOrPasswordError
+from exceptions.admin import LoginAlreadyExistsError, IncorrectUsernameOrPasswordError
+from exceptions.common import InvalidTokenError
 from schemas.admin import AdminCreateSchema
 from utils.validate import create_admin_access_token
 
